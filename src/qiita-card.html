@@ -1,0 +1,299 @@
+<template id="qiita-template">
+  <style>
+    :host {
+      display: block;
+      width: 250px;
+      line-height: 1.2;
+      font-size: 13px;
+      font-family: sans-serif;
+      color: #4a4a4a;
+    }
+    img {
+      vertical-align: top;
+    }
+    a {
+      color: #117ec6;
+      text-decoration: none;
+    }
+    a:hover,
+    a:active,
+    a:focus {
+      text-decoration: underline;
+    }
+    h1, h2, ul, li, p {
+      margin: 0;
+      padding: 0;
+    }
+    h1, h2 {
+      font-size: 100%;
+      font-weight: normal;
+    }
+    ul {
+      list-style: none;
+    }
+    .qiita-card {
+      position: relative;
+      padding: 15px 15px 10px;
+      border: 1px solid #e8eee4;
+      border-radius: 4px;
+      background: #f3f6f1;
+    }
+    .qiita-card__header {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+    .qiita-card__logo {
+      display: inline-block;
+      padding: 3px 5px;
+      background: #59bb0c;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 10px;
+    }
+    .user__header {
+      margin-bottom: 15px;
+    }
+    .user__headerUpper {
+      display: table;
+      margin-bottom: 15px;
+    }
+    .user__img {
+      display: table-cell;
+      width: 92px;
+      vertical-align: top;
+    }
+    .user__img img {
+      width: 80px;
+      margin-right: 10px;
+      border: 1px solid #e8eee4;
+      border-radius: 4px;
+    }
+    .user__info {
+      display: table-cell;
+      padding-top: 7px;
+      vertical-align: top;
+    }
+    .user__id {
+      margin-bottom: 5px;
+      font-size: 15px;
+      font-weight: bold;
+      word-break: break-all;
+    }
+    .user__name {
+      margin-bottom: 5px;
+    }
+    .user__description {
+      font-size: 11px;
+      word-break: break-all;
+    }
+    .user__status {
+      display: table;
+      table-layout: fixed;
+      width: 248px;
+      margin: 0 -14px;
+      background: #eef2ea;
+      border-width: 1px 0;
+      border-style: solid;
+      border-color: #e8eee4;
+      line-height: 1;
+    }
+    .user__statusItem {
+      display: table-cell;
+      padding: 10px 0;
+      text-align: center;
+    }
+    .user__statusItemInner {
+      padding: 0 5px;
+      border-left: 1px dotted #ddd;
+    }
+    .user__statusItem:first-child .user__statusItem {
+      border-left-width: 0;
+    }
+    .user__statusCount {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 21px;
+    }
+    .user__statusLabel {
+      display: block;
+      font-size: 11px;
+      color: #999;
+    }
+    .items {
+      background: rgba(255,255,255,0.8);
+      padding: 0 10px;
+      border-radius: 4px;
+    }
+    .item {
+      padding: 10px 0;
+      border-top: 1px dotted #e8eee4;
+    }
+    .item:first-child {
+      border-top-width: 0;
+    }
+    .item__title {
+      margin-bottom: 5px;
+    }
+    .item__info {
+      font-size: 11px;
+      color: #999;
+    }
+    .item__info > li {
+      display: inline-block;
+      margin-right: 5px;
+    }
+    .item__stock {
+      display: inline-block;
+      padding: 2px 5px;
+      background: #59bb0c;
+      color: #fff;
+      border-radius: 2px;
+      vertical-align: baseline;
+    }
+    .item__stockCount {
+      font-weight: bold;
+      margin-right: 3px;
+    }
+    .qiita-card__footer {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #bbb;
+      text-align: center;
+    }
+    .made-from a {
+      color: inherit;
+    }
+  </style>
+
+  <article class="qiita-card">
+    <header class="qiita-card__header">
+      <a class="qiita-card__logo" href="http://qiita.com/"><img src="http://cdn.qiita.com/assets/siteid-bold-8dd9006898412ce8ca3091bf0a57acac.png" alt="" width="30"></a>
+    </header>
+    <section class="user">
+      <header class="user__header">
+        <div class="user__headerUpper">
+          <div class="user__img">
+            <img src="https://secure.gravatar.com/avatar/5713bf32ecfacfc3b921151a453cc18e" alt="">
+          </div>
+          <div class="user__info">
+            <h1 class="user__id"><a href="#">nakajmg</a></h1>
+            <p class="user__name">じまぐ</p>
+            <p class="user__description">フロントエンドの人。JavaScript/CSS/HTML</p>
+          </div>
+        </div>
+        <div class="user__headerLower">
+          <ul class="user__status">
+            <li class="user__statusItem">
+              <div class="user__statusIteminner">
+                <span class="user__statusCount user__contribution">1225</span>
+                <span class="user__statusLabel">contribution</span>
+              </div>
+            </li>
+            <li class="user__statusItem">
+              <div class="user__statusIteminner">
+                <span class="user__statusCount user__followers">181</span>
+                <span class="user__statusLabel">followers</span>
+              </div>
+            </li>
+            <li class="user__statusItem">
+              <div class="user__statusIteminner">
+                <span class="user__statusCount user__post">30</span>
+                <span class="user__statusLabel">posted</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </header>
+      <div class="items">
+        <section class="item">
+          <h2 class="item__title"><a href="#">ターミナルからiOSシミュレータを開く</a></h2>
+          <ul class="item__info">
+            <li class="item__stock"><span class="item__stockCount">6</span>stocks</li>
+            <li class="item__date">2013-07-30</li>
+          </ul>
+        </section>
+        <section class="item">
+          <h2 class="item__title"><a href="#">ターミナルからiOSシミュレータを開く</a></h2>
+          <ul class="item__info">
+            <li class="item__stock"><span class="item__stockCount">6</span>stocks</li>
+            <li class="item__date">2013-07-30</li>
+          </ul>
+        </section>
+        <section class="item">
+          <h2 class="item__title"><a href="#">ターミナルからiOSシミュレータを開く</a></h2>
+          <ul class="item__info">
+            <li class="item__stock"><span class="item__stockCount">6</span>stocks</li>
+            <li class="item__date">2013-07-30</li>
+          </ul>
+        </section>
+        <section class="item">
+          <h2 class="item__title"><a href="#">ターミナルからiOSシミュレータを開く</a></h2>
+          <ul class="item__info">
+            <li class="item__stock"><span class="item__stockCount">6</span>stocks</li>
+            <li class="item__date">2013-07-30</li>
+          </ul>
+        </section>
+        <section class="item">
+          <h2 class="item__title"><a href="#">ターミナルからiOSシミュレータを開く</a></h2>
+          <ul class="item__info">
+            <li class="item__stock"><span class="item__stockCount">6</span>stocks</li>
+            <li class="item__date">2013-07-30</li>
+          </ul>
+        </section>
+      </div>
+    </section>
+    <footer class="qiita-card__footer">
+      <p class="made-from">made from <a href="#">&lt;qiita-card&gt;</a></p>
+    </footer>
+  </article>
+</template>
+
+<script>
+  var url = 'https://qiita.com/api/v1/users/',
+      urlItems = '/items',
+      doc = document.currentScript.ownerDocument,
+      XqiitaProto = Object.create(HTMLElement.prototype);
+
+  XqiitaProto.getItems = function getJSON() {
+    var that = this,
+        xhr = new XMLHttpRequest();
+
+    xhr.open('GET', url + this.getAttribute('user') + urlItems);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === xhr.DONE) {
+        status = xhr.status;
+
+        if ((status >= 200 && status < 300) || status === 304 || status === 0) {
+          response = JSON.parse(xhr.response || xhr.responseText);
+          that.fillItems(response);
+        }
+      }
+    };
+
+    xhr.send();
+  };
+
+  XqiitaProto.fillItems = function fillItems(items) {
+    var usr = this.shadow;
+
+    console.log(items);
+    console.log(items.length);
+
+    // usr.querySelector('.item-title').textContent = items[0].title;
+    // usr.querySelector('.item-count').textContent = items[0].stock_count;
+  };
+
+  XqiitaProto.createdCallback = function() {
+    var template = doc.querySelector("#qiita-template"),
+        usr = template.content.cloneNode(true);
+    this.shadow = this.createShadowRoot();
+    this.shadow.appendChild(usr);
+  };
+
+  XqiitaProto.attachedCallback = function() {
+    this.getItems();
+  };
+
+  var Xqiita = doc.registerElement('qiita-card', {'prototype': XqiitaProto});
+</script>
