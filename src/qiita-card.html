@@ -1,338 +1,340 @@
 <template id="qiita-card-template">
-  <style>
-    :host {
-      display: block;
-      width: 250px;
-      line-height: 1.2;
-      font-size: 13px;
-      font-family: sans-serif;
-      color: #4a4a4a;
-    }
-    img {
-      vertical-align: top;
-    }
-    a {
-      color: #117ec6;
-      text-decoration: none;
-    }
-    a:hover,
-    a:active,
-    a:focus {
-      text-decoration: underline;
-    }
-    h1, h2, ul, li, p {
-      margin: 0;
-      padding: 0;
-    }
-    h1, h2 {
-      font-size: 100%;
-      font-weight: normal;
-    }
-    ul {
-      list-style: none;
-    }
-    .qiita-card {
-      position: relative;
-      padding: 15px 15px 10px;
-      border: 1px solid #e8eee4;
-      border-radius: 4px;
-      background: #f3f6f1;
-    }
-    .qiita-card__header {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-    }
-    .qiita-card__logo {
-      display: inline-block;
-      padding: 3px 5px;
-      background: #59bb0c;
-      border-radius: 4px;
-      color: #fff;
-      font-size: 10px;
-    }
-    .user__header {
-      margin-bottom: 15px;
-    }
-    .user__headerUpper {
-      display: table;
-      margin-bottom: 15px;
-    }
-    .user__img {
-      display: table-cell;
-      width: 92px;
-      vertical-align: top;
-    }
-    .user__img img {
-      width: 80px;
-      margin-right: 10px;
-      border: 1px solid #e8eee4;
-      border-radius: 4px;
-    }
-    .user__info {
-      display: table-cell;
-      padding-top: 7px;
-      vertical-align: top;
-    }
-    .user__id {
-      margin-bottom: 5px;
-      font-size: 15px;
-      font-weight: bold;
-      word-break: break-all;
-    }
-    .user__name {
-      margin-bottom: 5px;
-    }
-    .user__extra {
-      font-size: 11px;
-      word-break: break-all;
-    }
-    .user__status {
-      display: table;
-      table-layout: fixed;
-      width: 248px;
-      margin: 0 -14px;
-      background: #eef2ea;
-      border-width: 1px 0;
-      border-style: solid;
-      border-color: #e8eee4;
-      line-height: 1;
-    }
-    .user__statusItem {
-      display: table-cell;
-      padding: 10px 0;
-      text-align: center;
-    }
-    .user__statusItemInner {
-      padding: 0 5px;
-      border-left: 1px dotted #ddd;
-    }
-    .user__statusItem:first-child .user__statusItem {
-      border-left-width: 0;
-    }
-    .user__statusCount {
-      display: block;
-      margin-bottom: 3px;
-      font-size: 21px;
-    }
-    .user__statusLabel {
-      display: block;
-      font-size: 11px;
-      color: #999;
-    }
-    .items {
-      background: rgba(255,255,255,0.8);
-      padding: 0 10px;
-      border-radius: 4px;
-    }
-    .item {
-      padding: 10px 0;
-      border-top: 1px dotted #e8eee4;
-    }
-    .item:first-child {
-      border-top-width: 0;
-    }
-    .item__title {
-      margin-bottom: 5px;
-    }
-    .item__info {
-      font-size: 11px;
-      color: #999;
-    }
-    .item__info > li {
-      display: inline-block;
-      margin-right: 5px;
-    }
-    .item__stock {
-      display: inline-block;
-      padding: 2px 5px;
-      background: #59bb0c;
-      color: #fff;
-      border-radius: 2px;
-      vertical-align: baseline;
-    }
-    .item__stockCount {
-      font-weight: bold;
-      margin-right: 3px;
-    }
-    .qiita-card__footer {
-      margin-top: 10px;
-      font-size: 11px;
-      color: #bbb;
-      text-align: center;
-    }
-    .made-from a {
-      color: inherit;
-    }
-  </style>
+<style>
+:host {
+  display: block;
+  width: 250px;
+  line-height: 1.2;
+  font-size: 13px;
+  font-family: sans-serif;
+  color: #4a4a4a;
+}
+img {
+  vertical-align: top;
+}
+a {
+  color: #117ec6;
+  text-decoration: none;
+}
+a:hover,
+a:active,
+a:focus {
+  text-decoration: underline;
+}
+h1, h2, ul, li, p {
+  margin: 0;
+  padding: 0;
+}
+h1, h2 {
+  font-size: 100%;
+  font-weight: normal;
+}
+ul {
+  list-style: none;
+}
+.qiita-card {
+  position: relative;
+  padding: 15px 15px 10px;
+  border: 1px solid #e8eee4;
+  border-radius: 4px;
+  background: #f3f6f1;
+}
+.qiita-card__header {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+.qiita-card__logo {
+  display: inline-block;
+  padding: 3px 5px;
+  background: #59bb0c;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 10px;
+}
+.user__header {
+  margin-bottom: 15px;
+}
+.user__headerUpper {
+  display: table;
+  margin-bottom: 15px;
+}
+.user__img {
+  display: table-cell;
+  width: 92px;
+  vertical-align: top;
+}
+.user__img img {
+  width: 80px;
+  margin-right: 10px;
+  border: 1px solid #e8eee4;
+  border-radius: 4px;
+}
+.user__info {
+  display: table-cell;
+  padding-top: 7px;
+  vertical-align: top;
+}
+.user__id {
+  margin-bottom: 5px;
+  font-size: 15px;
+  font-weight: bold;
+  word-break: break-all;
+}
+.user__name {
+  margin-bottom: 5px;
+}
+.user__extra {
+  font-size: 11px;
+  word-break: break-all;
+}
+.user__status {
+  display: table;
+  table-layout: fixed;
+  width: 248px;
+  margin: 0 -14px;
+  background: #eef2ea;
+  border-width: 1px 0;
+  border-style: solid;
+  border-color: #e8eee4;
+  line-height: 1;
+}
+.user__statusItem {
+  display: table-cell;
+  padding: 10px 0;
+  text-align: center;
+}
+.user__statusItemInner {
+  padding: 0 5px;
+  border-left: 1px dotted #ddd;
+}
+.user__statusItem:first-child .user__statusItem {
+  border-left-width: 0;
+}
+.user__statusCount {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 21px;
+}
+.user__statusLabel {
+  display: block;
+  font-size: 11px;
+  color: #999;
+}
+.items {
+  background: rgba(255,255,255,0.8);
+  padding: 0 10px;
+  border-radius: 4px;
+}
+.item {
+  padding: 10px 0;
+  border-top: 1px dotted #e8eee4;
+}
+.item:first-child {
+  border-top-width: 0;
+}
+.item__title {
+  margin-bottom: 5px;
+}
+.item__info {
+  font-size: 11px;
+  color: #999;
+}
+.item__info > li {
+  display: inline-block;
+  margin-right: 5px;
+}
+.item__stock {
+  display: inline-block;
+  padding: 2px 5px;
+  background: #59bb0c;
+  color: #fff;
+  border-radius: 2px;
+  vertical-align: baseline;
+}
+.item__stockCount {
+  font-weight: bold;
+  margin-right: 3px;
+}
+.qiita-card__footer {
+  margin-top: 10px;
+  font-size: 11px;
+  color: #bbb;
+  text-align: center;
+}
+.made-from a {
+  color: inherit;
+}
+</style>
 
-  <article class="qiita-card">
-    <header class="qiita-card__header">
-      <a class="qiita-card__logo" href="http://qiita.com/"><img src="http://cdn.qiita.com/assets/siteid-bold-8dd9006898412ce8ca3091bf0a57acac.png" alt="" width="30"></a>
-    </header>
-    <section class="user">
-      <header class="user__header">
-        <div class="user__headerUpper">
-          <div class="user__img">
-            <img alt="" width="80" height="80">
-          </div>
-          <div class="user__info">
-            <h1 class="user__id"><a></a></h1>
-            <p class="user__name"></p>
-            <p class="user__extra"></p>
-          </div>
+<article class="qiita-card">
+  <header class="qiita-card__header">
+    <a class="qiita-card__logo" href="http://qiita.com/"><img src="http://cdn.qiita.com/assets/siteid-bold-8dd9006898412ce8ca3091bf0a57acac.png" alt="" width="30"></a>
+  </header>
+  <section class="user">
+    <header class="user__header">
+      <div class="user__headerUpper">
+        <div class="user__img">
+          <img alt="" width="80" height="80">
         </div>
-        <div class="user__headerLower">
-          <ul class="user__status">
-            <li class="user__statusItem">
-              <div class="user__statusIteminner">
-                <span class="user__statusCount user__contribution">1225</span>
-                <span class="user__statusLabel">contribution</span>
-              </div>
-            </li>
-            <li class="user__statusItem">
-              <div class="user__statusIteminner">
-                <span class="user__statusCount user__followers"></span>
-                <span class="user__statusLabel">followers</span>
-              </div>
-            </li>
-            <li class="user__statusItem">
-              <div class="user__statusIteminner">
-                <span class="user__statusCount user__items"></span>
-                <span class="user__statusLabel">items</span>
-              </div>
-            </li>
-          </ul>
+        <div class="user__info">
+          <h1 class="user__id"><a></a></h1>
+          <p class="user__name"></p>
+          <p class="user__extra"></p>
         </div>
-      </header>
-      <div class="items">
       </div>
-    </section>
-    <footer class="qiita-card__footer">
-      <p class="made-from">made from <a href="#">&lt;qiita-card&gt;</a></p>
-    </footer>
-  </article>
+      <div class="user__headerLower">
+        <ul class="user__status">
+          <li class="user__statusItem">
+            <div class="user__statusIteminner">
+              <span class="user__statusCount user__contribution">1225</span>
+              <span class="user__statusLabel">contribution</span>
+            </div>
+          </li>
+          <li class="user__statusItem">
+            <div class="user__statusIteminner">
+              <span class="user__statusCount user__followers"></span>
+              <span class="user__statusLabel">followers</span>
+            </div>
+          </li>
+          <li class="user__statusItem">
+            <div class="user__statusIteminner">
+              <span class="user__statusCount user__items"></span>
+              <span class="user__statusLabel">items</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </header>
+    <div class="items">
+    </div>
+  </section>
+  <footer class="qiita-card__footer">
+    <p class="made-from">made from <a href="#">&lt;qiita-card&gt;</a></p>
+  </footer>
+</article>
 </template>
 
 <script>
-  'use strict';
+'use strict';
 
-  var url            = 'https://qiita.com/api/v1/users/',
-      urlItems       = '/items',
-      urlPerPage     = '?per_page=100',
-      doc            = document.currentScript.ownerDocument,
-      QiitaCardProto = Object.create(HTMLElement.prototype);
+var url            = 'https://qiita.com/api/v1/users/',
+    urlItems       = '/items',
+    urlPerPage     = '?per_page=100',
+    doc            = document.currentScript.ownerDocument,
+    QiitaCardProto = Object.create(HTMLElement.prototype);
 
-  QiitaCardProto.getUser = function getJSON() {
-    var that = this,
-        xhr  = new XMLHttpRequest();
+QiitaCardProto.getUser = function getJSON() {
+  var self = this,
+      xhr  = new XMLHttpRequest();
 
-    xhr.open('GET', url + this.urlName);
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === xhr.DONE) {
-        status = xhr.status;
+  xhr.open('GET', url + this.attr.user);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === xhr.DONE) {
+      status = xhr.status;
 
-        if ((status >= 200 && status < 300) || status === 304 || status === 0) {
-          that.fillUser(JSON.parse(xhr.response || xhr.responseText));
-        }
+      if ((status >= 200 && status < 300) || status === 304 || status === 0) {
+        self.fillUser(JSON.parse(xhr.response || xhr.responseText));
       }
-    };
-
-    xhr.send();
-  };
-
-  QiitaCardProto.fillUser = function fillUser(user) {
-    var card          = this.shadow,
-        userId        = card.querySelector('.user__id > a'),
-        userImg       = card.querySelector('.user__img > img'),
-        userName      = card.querySelector('.user__name'),
-        userExtra     = card.querySelector('.user__extra'),
-        userFollowers = card.querySelector('.user__followers'),
-        userItems     = card.querySelector('.user__items');
-
-    userId.textContent = user.url_name;
-    userId.href        = user.url;
-    userImg.src        = user.profile_image_url;
-    (user.name.trim() !== '') ?
-      userName.textContent = user.name:
-      userName.textContent = user.url_name;
-    (user.description.trim() !== '') ?
-      userExtra.textContent = user.description:
-      (user.organization.trim() !== '') ?
-        userExtra.textContent = user.organization:
-        (user.location.trim() !== '') ?
-        userExtra.textContent = user.location:
-        userExtra.textContent = '';;;
-    userFollowers.textContent = user.followers;
-    userItems.textContent = user.items;
-  };
-
-  QiitaCardProto.getItems = function getJSON() {
-    var that = this,
-        xhr = new XMLHttpRequest();
-
-    xhr.open('GET', url + this.urlName + urlItems + urlPerPage);
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === xhr.DONE) {
-        status = xhr.status;
-
-        if ((status >= 200 && status < 300) || status === 304 || status === 0) {
-          that.fillItems(JSON.parse(xhr.response || xhr.responseText));
-        }
-      }
-    };
-
-    xhr.send();
-  };
-
-  QiitaCardProto.fillItems = function fillItems(items) {
-    var card        = this.shadow,
-        sortedItems = [],
-        html        = '',
-        container   = card.querySelector('.items');
-
-    sortedItems = items.sort(function (a, b) {
-      if (a.stock_count < b.stock_count) {
-        return 1;
-      }
-      if (a.stock_count > b.stock_count) {
-        return -1;
-      }
-      return 0;
-    });
-
-    for (var i = 0; i < 5; i++) {
-      var title = sortedItems[i].title,
-          date  = sortedItems[i].created_at.match(/^\d+-\d+-\d+/)[0],
-          stock = sortedItems[i].stock_count,
-          url   = sortedItems[i].url;
-
-      html += '<section class="item">';
-      html += '<h2 class="item__title"><a href="' + url + '">' + title + '</a></h2>';
-      html += '<ul class="item__info">';
-      html += '<li class="item__stock"><span class="item__stockCount">' + stock + '</span>stocks</li>';
-      html += '<li class="item__date">' + date + '</li>';
-      html += '</ul>';
-      html += '</section>';
     }
-
-    container.innerHTML = html;
   };
 
-  QiitaCardProto.createdCallback = function() {
-    this.urlName = this.getAttribute('user');
+  xhr.send();
+};
 
-    var template = doc.querySelector("#qiita-card-template"),
-        card     = template.content.cloneNode(true);
+QiitaCardProto.fillUser = function fillUser(user) {
+  var userId        = this.shadow.querySelector('.user__id > a'),
+      userImg       = this.shadow.querySelector('.user__img > img'),
+      userName      = this.shadow.querySelector('.user__name'),
+      userExtra     = this.shadow.querySelector('.user__extra'),
+      userFollowers = this.shadow.querySelector('.user__followers'),
+      userItems     = this.shadow.querySelector('.user__items');
 
-    this.shadow = this.createShadowRoot();
-    this.shadow.appendChild(card);
+  userId.textContent = user.url_name;
+  userId.href        = user.url;
+  userImg.src        = user.profile_image_url;
+  (user.name.trim() !== '') ?
+    userName.textContent = user.name:
+    userName.textContent = user.url_name;
+  (user.description.trim() !== '') ?
+    userExtra.textContent = user.description:
+    (user.organization.trim() !== '') ?
+      userExtra.textContent = user.organization:
+      (user.location.trim() !== '') ?
+      userExtra.textContent = user.location:
+      userExtra.textContent = '';;;
+  userFollowers.textContent = user.followers;
+  userItems.textContent = user.items;
+};
+
+QiitaCardProto.getItems = function getJSON() {
+  var self = this,
+      xhr  = new XMLHttpRequest();
+
+  xhr.open('GET', url + this.attr.user + urlItems + urlPerPage);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === xhr.DONE) {
+      status = xhr.status;
+
+      if ((status >= 200 && status < 300) || status === 304 || status === 0) {
+        self.fillItems(JSON.parse(xhr.response || xhr.responseText));
+      }
+    }
   };
 
-  QiitaCardProto.attachedCallback = function() {
-    this.getUser();
-    this.getItems();
+  xhr.send();
+};
+
+QiitaCardProto.fillItems = function fillItems(items) {
+  var sortedItems = [],
+      html        = '',
+      container   = this.shadow.querySelector('.items');
+
+  sortedItems = items.sort(function (a, b) {
+    if (a.stock_count < b.stock_count) {
+      return 1;
+    }
+    if (a.stock_count > b.stock_count) {
+      return -1;
+    }
+    return 0;
+  });
+
+  for (var i = 0; i < 5; i++) {
+    var title = sortedItems[i].title,
+        date  = sortedItems[i].created_at.match(/^\d+-\d+-\d+/)[0],
+        stock = sortedItems[i].stock_count,
+        url   = sortedItems[i].url;
+
+    html += '<section class="item">';
+    html += '<h2 class="item__title"><a href="' + url + '">' + title + '</a></h2>';
+    html += '<ul class="item__info">';
+    html += '<li class="item__stock"><span class="item__stockCount">' + stock + '</span>stocks</li>';
+    html += '<li class="item__date">' + date + '</li>';
+    html += '</ul>';
+    html += '</section>';
+  }
+
+  container.innerHTML = html;
+};
+
+QiitaCardProto.createdCallback = function() {
+  this.attr = {
+    user: this.getAttribute('user'),
+    count: this.getAttribute('count'),
+    width: this.getAttribute('width'),
   };
 
-  var QiitaCard = document.registerElement('qiita-card', {'prototype': QiitaCardProto});
+  var template = doc.querySelector("#qiita-card-template"),
+      card     = template.content.cloneNode(true);
+
+  this.shadow = this.createShadowRoot();
+  this.shadow.appendChild(card);
+};
+
+QiitaCardProto.attachedCallback = function() {
+  this.getUser();
+  this.getItems();
+};
+
+var QiitaCard = document.registerElement('qiita-card', {'prototype': QiitaCardProto});
 </script>
