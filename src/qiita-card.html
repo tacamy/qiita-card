@@ -299,7 +299,7 @@ QiitaCardProto.fillItems = function fillItems(items) {
     return 0;
   });
 
-  for (var i = 0; i < 5; i++) {
+  for (var i = 0; i < this.attr.count; i++) {
     var title = sortedItems[i].title,
         date  = sortedItems[i].created_at.match(/^\d+-\d+-\d+/)[0],
         stock = sortedItems[i].stock_count,
@@ -319,9 +319,10 @@ QiitaCardProto.fillItems = function fillItems(items) {
 
 QiitaCardProto.createdCallback = function() {
   this.attr = {
-    user: this.getAttribute('user'),
-    count: this.getAttribute('count'),
-    width: this.getAttribute('width'),
+    user  : this.getAttribute('user'),
+    count : this.getAttribute('count'),
+    width : this.getAttribute('width'),
+    sort  : this.getAttribute('sort')
   };
 
   var template = doc.querySelector("#qiita-card-template"),
