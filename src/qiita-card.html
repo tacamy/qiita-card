@@ -6,9 +6,10 @@
   font-size: 13px;
   font-family: sans-serif;
   color: #4a4a4a;
+  vertical-align: top;
 }
 img {
-  vertical-align: top;
+  vertical-align: middle;
 }
 a {
   color: #117ec6;
@@ -42,8 +43,8 @@ ul {
   right: 5px;
 }
 .qiita-card__logo {
-  display: inline-block;
-  padding: 3px 5px;
+  display: block;
+  padding: 3px 6px;
   background: #59bb0c;
   border-radius: 4px;
   color: #fff;
@@ -65,7 +66,7 @@ ul {
 }
 .user__info {
   display: table-cell;
-  padding-top: 7px;
+  padding-top: 10px;
   vertical-align: top;
 }
 .user__id {
@@ -185,7 +186,7 @@ a.user__statusItemInner:hover .user__statusLabel {
   <section class="user">
     <header class="user__header">
       <div class="user__img">
-        <img alt="" width="80" height="80">
+        <a><img alt="" width="80" height="80"></a>
       </div>
       <div class="user__info">
         <h1 class="user__id"><a></a></h1>
@@ -255,7 +256,8 @@ QiitaCardProto.getUser = function getJSON() {
 // ユーザー情報を設定
 QiitaCardProto.setUser  = function setUser(user) {
   var userId            = this.shadow.querySelector('.user__id > a'),
-      userImg           = this.shadow.querySelector('.user__img > img'),
+      userImgLink       = this.shadow.querySelector('.user__img > a'),
+      userImg           = this.shadow.querySelector('.user__img > a > img'),
       userName          = this.shadow.querySelector('.user__name'),
       userExtra         = this.shadow.querySelector('.user__extra'),
       userFollowersLink = this.shadow.querySelector('.user__followers-link'),
@@ -265,6 +267,7 @@ QiitaCardProto.setUser  = function setUser(user) {
 
   userId.textContent        = user.url_name;
   userId.href               = user.url;
+  userImgLink.href          = user.url;
   userFollowersLink.href    = user.url + '/followers';
   userFollowers.textContent = user.followers;
   userItemsLink.href        = user.url + '/items';
@@ -390,7 +393,7 @@ QiitaCardProto.setStyles = function () {
 // カスタムエレメントが生成されたときの処理
 QiitaCardProto.createdCallback = function () {
   this.options = {
-    user  : this.getAttribute('user')      || 'tacamy',
+    user  : this.getAttribute('user'), // 必須
     count : this.getAttribute('count') * 1 || 5,
     width : this.getAttribute('width')     || '280px',
     sort  : this.getAttribute('sort')      || 'stock'
