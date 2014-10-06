@@ -60,7 +60,7 @@ ul {
 .user__img img {
   margin-right: 10px;
   border: 1px solid #e8eee4;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 .user__info {
   display: table-cell;
@@ -86,9 +86,8 @@ ul {
   width: 100%;
   margin-bottom: 15px;
   background: #eef2ea;
+  border: solid #e8eee4;
   border-width: 1px 0;
-  border-style: solid;
-  border-color: #e8eee4;
   line-height: 1;
 }
 .user__statusItem {
@@ -245,21 +244,28 @@ QiitaCardProto.setUser = function setUser(user) {
       userFollowers    = this.shadow.querySelector('.user__followers'),
       userItems        = this.shadow.querySelector('.user__items');
 
-  userId.textContent = user.url_name;
-  userId.href        = user.url;
-  userImg.src        = user.profile_image_url;
-  (user.name.trim() !== '') ?
-    userName.textContent = user.name:
-    userName.textContent = user.url_name;
-  (user.description.trim() !== '') ?
-    userExtra.textContent = user.description:
-    (user.organization.trim() !== '') ?
-      userExtra.textContent = user.organization:
-      (user.location.trim() !== '') ?
-      userExtra.textContent = user.location:
-      userExtra.textContent = '';;;
+      console.log(user);
+
+  userId.textContent        = user.url_name;
+  userId.href               = user.url;
   userFollowers.textContent = user.followers;
   userItems.textContent     = user.items;
+
+  (/^https:\/\/si0.twimg.com\/profile_images\//.test(user.profile_image_url)) ?
+    userImg.src = '/src/noimage.png':
+    userImg.src = user.profile_image_url;
+
+  (user.name && user.name.trim() !== '') ?
+    userName.textContent = user.name:
+    userName.textContent = user.url_name;
+
+  (user.description && user.description.trim() !== '') ?
+    userExtra.textContent = user.description:
+    (user.organization && user.organization.trim() !== '') ?
+      userExtra.textContent = user.organization:
+      (user.location && user.location.trim() !== '') ?
+      userExtra.textContent = user.location:
+      userExtra.textContent = '';;;
 };
 
 
