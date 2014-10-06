@@ -229,6 +229,7 @@
 
   var url = 'https://qiita.com/api/v1/users/',
       urlItems = '/items',
+      urlPerPage = '?per_page=100',
       doc = document.currentScript.ownerDocument,
       QiitaCardProto = Object.create(HTMLElement.prototype);
 
@@ -284,7 +285,7 @@
     var that = this,
         xhr = new XMLHttpRequest();
 
-    xhr.open('GET', url + this.urlName + urlItems);
+    xhr.open('GET', url + this.urlName + urlItems + urlPerPage);
     xhr.onreadystatechange = function () {
       if (xhr.readyState === xhr.DONE) {
         status = xhr.status;
