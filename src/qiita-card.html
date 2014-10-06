@@ -306,21 +306,38 @@ QiitaCardProto.getItems = function getJSON() {
 QiitaCardProto.setItems = function setItems(items) {
   var html        = '',
       count       = this.options.count,
+      sort        = this.options.sort,
       container   = this.shadow.querySelector('.items');
 
   if (count > items.length) {
     count = items.length;
   }
 
-  items.sort(function (a, b) {
-    if (a.stock_count < b.stock_count) {
-      return 1;
-    }
-    if (a.stock_count > b.stock_count) {
-      return -1;
-    }
-    return 0;
-  });
+  if (sort === 'stock') {
+    items.sort(function (a, b) {
+      if (a.stock_count < b.stock_count) {
+        return 1;
+      }
+      if (a.stock_count > b.stock_count) {
+        return -1;
+      }
+      return 0;
+    });
+  }
+  else if (sort === 'date') {
+    items.sort(function (a, b) {
+      var dateA = a.created_at.match(/^\d+-\d+-\d+/)[0].replace(/-/g, ''),
+          dateB = b.created_at.match(/^\d+-\d+-\d+/)[0].replace(/-/g, '');
+
+      if (dateA < dateB) {
+        return 1;
+      }
+      if (dateA > dateB) {
+        return -1;
+      }
+      return 0;
+    });
+  }
 
   for (var i = 0; i < count; i++) {
     var title = items[i].title,
