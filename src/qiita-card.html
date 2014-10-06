@@ -1,6 +1,7 @@
 <template id="qiita-card-template">
 <style>
 :host {
+  display: inline-block;
   line-height: 1.4;
   font-size: 13px;
   font-family: sans-serif;
@@ -16,7 +17,7 @@ a {
 a:hover,
 a:active,
 a:focus {
-  text-decoration: underline;
+  color: #26ade4;
 }
 h1, h2, ul, li, p {
   margin: 0;
@@ -96,8 +97,15 @@ ul {
   text-align: center;
 }
 .user__statusItemInner {
+  display: block;
   padding: 0 5px;
   border-left: 1px dotted #ddd;
+  color: inherit;
+}
+a.user__statusItemInner:hover,
+a.user__statusItemInner:visited,
+a.user__statusItemInner:focus {
+  text-decoration: none;
 }
 .user__statusItem:first-child .user__statusItemInner {
   border-left-width: 0;
@@ -107,10 +115,16 @@ ul {
   margin-bottom: 3px;
   font-size: 21px;
 }
+a.user__statusItemInner:hover .user__statusCount {
+  color: #000;
+}
 .user__statusLabel {
   display: block;
   font-size: 11px;
   color: #999;
+}
+a.user__statusItemInner:hover .user__statusLabel {
+  color: #333;
 }
 .items {
   margin: 0 15px;
@@ -127,6 +141,9 @@ ul {
 }
 .item__title {
   margin-bottom: 5px;
+}
+.item__title a {
+  display: block;
 }
 .item__info {
   font-size: 11px;
@@ -184,16 +201,16 @@ ul {
         </div>
       </li>
       <li class="user__statusItem">
-        <div class="user__statusItemInner">
+        <a class="user__statusItemInner user__followers-link">
           <span class="user__statusCount user__followers"></span>
           <span class="user__statusLabel">followers</span>
-        </div>
+        </a>
       </li>
       <li class="user__statusItem">
-        <div class="user__statusItemInner">
+        <a class="user__statusItemInner user__items-link">
           <span class="user__statusCount user__items"></span>
           <span class="user__statusLabel">items</span>
-        </div>
+        </a>
       </li>
     </ul>
     <div class="items">
@@ -236,17 +253,21 @@ QiitaCardProto.getUser = function getJSON() {
 
 
 // ユーザー情報を設定
-QiitaCardProto.setUser = function setUser(user) {
-  var userId           = this.shadow.querySelector('.user__id > a'),
-      userImg          = this.shadow.querySelector('.user__img > img'),
-      userName         = this.shadow.querySelector('.user__name'),
-      userExtra        = this.shadow.querySelector('.user__extra'),
-      userFollowers    = this.shadow.querySelector('.user__followers'),
-      userItems        = this.shadow.querySelector('.user__items');
+QiitaCardProto.setUser  = function setUser(user) {
+  var userId            = this.shadow.querySelector('.user__id > a'),
+      userImg           = this.shadow.querySelector('.user__img > img'),
+      userName          = this.shadow.querySelector('.user__name'),
+      userExtra         = this.shadow.querySelector('.user__extra'),
+      userFollowersLink = this.shadow.querySelector('.user__followers-link'),
+      userFollowers     = this.shadow.querySelector('.user__followers'),
+      userItemsLink     = this.shadow.querySelector('.user__items-link'),
+      userItems         = this.shadow.querySelector('.user__items');
 
   userId.textContent        = user.url_name;
   userId.href               = user.url;
+  userFollowersLink.href    = user.url + '/followers';
   userFollowers.textContent = user.followers;
+  userItemsLink.href        = user.url + '/items';
   userItems.textContent     = user.items;
 
   (/^https:\/\/si0.twimg.com\/profile_images\//.test(user.profile_image_url)) ?
@@ -371,7 +392,7 @@ QiitaCardProto.createdCallback = function () {
   this.options = {
     user  : this.getAttribute('user')      || 'tacamy',
     count : this.getAttribute('count') * 1 || 5,
-    width : this.getAttribute('width')     || '250px',
+    width : this.getAttribute('width')     || '280px',
     sort  : this.getAttribute('sort')      || 'stock'
   };
 
