@@ -216,6 +216,7 @@ var url            = 'https://qiita.com/api/v1/users/',
     QiitaCardProto = Object.create(HTMLElement.prototype);
 
 
+// ユーザー情報を取得
 QiitaCardProto.getUser = function getJSON() {
   var self = this,
       xhr  = new XMLHttpRequest();
@@ -226,7 +227,7 @@ QiitaCardProto.getUser = function getJSON() {
       status = xhr.status;
 
       if ((status >= 200 && status < 300) || status === 304 || status === 0) {
-        self.fillUser(JSON.parse(xhr.response || xhr.responseText));
+        self.setUser(JSON.parse(xhr.response || xhr.responseText));
       }
     }
   };
@@ -235,7 +236,8 @@ QiitaCardProto.getUser = function getJSON() {
 };
 
 
-QiitaCardProto.fillUser = function fillUser(user) {
+// ユーザー情報を設定
+QiitaCardProto.setUser = function setUser(user) {
   var userId           = this.shadow.querySelector('.user__id > a'),
       userImg          = this.shadow.querySelector('.user__img > img'),
       userName         = this.shadow.querySelector('.user__name'),
@@ -261,7 +263,8 @@ QiitaCardProto.fillUser = function fillUser(user) {
 };
 
 
-QiitaCardProto.fillContribution = function (items) {
+// Contribution値を設定
+QiitaCardProto.setContribution = function (items) {
   var contributionCount = 0,
       userContribution = this.shadow.querySelector('.user__contribution');
 
@@ -273,6 +276,7 @@ QiitaCardProto.fillContribution = function (items) {
 };
 
 
+// 投稿した記事情報を取得
 QiitaCardProto.getItems = function getJSON() {
   var self = this,
       xhr  = new XMLHttpRequest();
@@ -284,8 +288,8 @@ QiitaCardProto.getItems = function getJSON() {
 
       if ((status >= 200 && status < 300) || status === 304 || status === 0) {
         var items = JSON.parse(xhr.response || xhr.responseText);
-        self.fillContribution(items);
-        self.fillItems(items);
+        self.setContribution(items);
+        self.setItems(items);
       }
     }
   };
@@ -294,7 +298,8 @@ QiitaCardProto.getItems = function getJSON() {
 };
 
 
-QiitaCardProto.fillItems = function fillItems(items) {
+// 投稿した記事情報を設定
+QiitaCardProto.setItems = function setItems(items) {
   var html        = '',
       count       = (this.attr.count <= items.length) ? this.attr.count : items.length,
       container   = this.shadow.querySelector('.items');
@@ -328,6 +333,7 @@ QiitaCardProto.fillItems = function fillItems(items) {
 };
 
 
+// 属性で指定されたスタイル情報を設定
 QiitaCardProto.setStyles = function () {
   var card        = this.shadow.querySelector('.qiita-card');
 
@@ -335,6 +341,7 @@ QiitaCardProto.setStyles = function () {
 };
 
 
+// カスタムエレメントが生成されたときの処理
 QiitaCardProto.createdCallback = function () {
   this.attr = {
     user  : this.getAttribute('user'),
@@ -352,11 +359,13 @@ QiitaCardProto.createdCallback = function () {
 };
 
 
+// カスタムエレメントがHTMLに追加されたときの処理
 QiitaCardProto.attachedCallback = function () {
   this.getItems();
   this.getUser();
 };
 
 
+// カスタムエレメントを登録
 var QiitaCard = document.registerElement('qiita-card', {'prototype': QiitaCardProto});
 </script>
