@@ -198,7 +198,7 @@
             </li>
             <li class="user__statusItem">
               <div class="user__statusIteminner">
-                <span class="user__statusCount user__post"></span>
+                <span class="user__statusCount user__items"></span>
                 <span class="user__statusLabel">items</span>
               </div>
             </li>
@@ -255,21 +255,29 @@
 
     console.log(user);
 
-    card.querySelector('.user__id > a').textContent = user.url_name;
-    card.querySelector('.user__id > a').href = user.url;
-    card.querySelector('.user__img > img').src = user.profile_image_url;
+    var userId    = card.querySelector('.user__id > a'),
+        userImg   = card.querySelector('.user__img > img'),
+        userName  = card.querySelector('.user__name'),
+        userExtra = card.querySelector('.user__extra'),
+        userFollowers = card.querySelector('.user__followers'),
+        userItems = card.querySelector('.user__items');
+
+
+    userId.textContent = user.url_name;
+    userId.href = user.url;
+    userImg.src = user.profile_image_url;
     (user.name.trim() !== '') ?
-      card.querySelector('.user__name').textContent = user.name:
-      card.querySelector('.user__name').textContent = user.url_name;
+      userName.textContent = user.name:
+      userName.textContent = user.url_name;
     (user.description.trim() !== '') ?
-      card.querySelector('.user__extra').textContent = user.description:
+      userExtra.textContent = user.description:
       (user.organization.trim() !== '') ?
-        card.querySelector('.user__extra').textContent = user.organization:
+        userExtra.textContent = user.organization:
         (user.location.trim() !== '') ?
-        card.querySelector('.user__extra').textContent = user.location:
-        card.querySelector('.user__extra').textContent = '';;;
-    card.querySelector('.user__followers').textContent = user.followers;
-    card.querySelector('.user__post').textContent = user.items;
+        userExtra.textContent = user.location:
+        userExtra.textContent = '';;;
+    userFollowers.textContent = user.followers;
+    userItems.textContent = user.items;
   };
 
   QiitaCardProto.getItems = function getJSON() {
