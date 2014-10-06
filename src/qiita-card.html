@@ -244,8 +244,6 @@ QiitaCardProto.setUser = function setUser(user) {
       userFollowers    = this.shadow.querySelector('.user__followers'),
       userItems        = this.shadow.querySelector('.user__items');
 
-      console.log(user);
-
   userId.textContent        = user.url_name;
   userId.href               = user.url;
   userFollowers.textContent = user.followers;
@@ -255,15 +253,15 @@ QiitaCardProto.setUser = function setUser(user) {
     userImg.src = '/src/noimage.png':
     userImg.src = user.profile_image_url;
 
-  (user.name && user.name.trim() !== '') ?
+  (user.name && user.name.trim()) ?
     userName.textContent = user.name:
     userName.textContent = user.url_name;
 
-  (user.description && user.description.trim() !== '') ?
+  (user.description && user.description.trim()) ?
     userExtra.textContent = user.description:
-    (user.organization && user.organization.trim() !== '') ?
+    (user.organization && user.organization.trim()) ?
       userExtra.textContent = user.organization:
-      (user.location && user.location.trim() !== '') ?
+      (user.location && user.location.trim()) ?
       userExtra.textContent = user.location:
       userExtra.textContent = '';;;
 };
