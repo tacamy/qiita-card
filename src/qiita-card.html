@@ -31,7 +31,6 @@ ul {
 }
 .qiita-card {
   position: relative;
-  padding: 15px 15px 10px;
   border: 1px solid #e8eee4;
   border-radius: 4px;
   background: #f3f6f1;
@@ -50,11 +49,8 @@ ul {
   font-size: 10px;
 }
 .user__header {
-  margin-bottom: 15px;
-}
-.user__headerUpper {
+  margin: 15px;
   display: table;
-  margin-bottom: 15px;
 }
 .user__img {
   display: table-cell;
@@ -62,7 +58,6 @@ ul {
   vertical-align: top;
 }
 .user__img img {
-  width: 80px;
   margin-right: 10px;
   border: 1px solid #e8eee4;
   border-radius: 4px;
@@ -88,7 +83,8 @@ ul {
 .user__status {
   display: table;
   table-layout: fixed;
-  margin: 0 -14px;
+  width: 100%;
+  margin-bottom: 15px;
   background: #eef2ea;
   border-width: 1px 0;
   border-style: solid;
@@ -104,7 +100,7 @@ ul {
   padding: 0 5px;
   border-left: 1px dotted #ddd;
 }
-.user__statusItem:first-child .user__statusItem {
+.user__statusItem:first-child .user__statusItemInner {
   border-left-width: 0;
 }
 .user__statusCount {
@@ -118,8 +114,9 @@ ul {
   color: #999;
 }
 .items {
-  background: rgba(255,255,255,0.8);
+  margin: 0 15px;
   padding: 0 10px;
+  background: rgba(255,255,255,0.8);
   border-radius: 4px;
 }
 .item {
@@ -134,7 +131,6 @@ ul {
 }
 .item__info {
   font-size: 11px;
-  color: #999;
 }
 .item__info > li {
   display: inline-block;
@@ -143,8 +139,8 @@ ul {
 .item__stock {
   display: inline-block;
   padding: 1px 5px;
-  background: #59bb0c;
-  color: #fff;
+  background: #eef2ea;
+  border: 1px solid #e8eee4;
   border-radius: 2px;
   vertical-align: baseline;
 }
@@ -152,8 +148,11 @@ ul {
   font-weight: bold;
   margin-right: 3px;
 }
+.item__date {
+  color: #999;
+}
 .qiita-card__footer {
-  margin-top: 10px;
+  margin: 10px 15px;
   font-size: 11px;
   color: #bbb;
   text-align: center;
@@ -169,39 +168,35 @@ ul {
   </header>
   <section class="user">
     <header class="user__header">
-      <div class="user__headerUpper">
-        <div class="user__img">
-          <img alt="" width="80" height="80">
-        </div>
-        <div class="user__info">
-          <h1 class="user__id"><a></a></h1>
-          <p class="user__name"></p>
-          <p class="user__extra"></p>
-        </div>
+      <div class="user__img">
+        <img alt="" width="80" height="80">
       </div>
-      <div class="user__headerLower">
-        <ul class="user__status">
-          <li class="user__statusItem">
-            <div class="user__statusIteminner">
-              <span class="user__statusCount user__contribution">1225</span>
-              <span class="user__statusLabel">contribution</span>
-            </div>
-          </li>
-          <li class="user__statusItem">
-            <div class="user__statusIteminner">
-              <span class="user__statusCount user__followers"></span>
-              <span class="user__statusLabel">followers</span>
-            </div>
-          </li>
-          <li class="user__statusItem">
-            <div class="user__statusIteminner">
-              <span class="user__statusCount user__items"></span>
-              <span class="user__statusLabel">items</span>
-            </div>
-          </li>
-        </ul>
+      <div class="user__info">
+        <h1 class="user__id"><a></a></h1>
+        <p class="user__name"></p>
+        <p class="user__extra"></p>
       </div>
     </header>
+    <ul class="user__status">
+      <li class="user__statusItem">
+        <div class="user__statusItemInner">
+          <span class="user__statusCount user__contribution">1225</span>
+          <span class="user__statusLabel">contribution</span>
+        </div>
+      </li>
+      <li class="user__statusItem">
+        <div class="user__statusItemInner">
+          <span class="user__statusCount user__followers"></span>
+          <span class="user__statusLabel">followers</span>
+        </div>
+      </li>
+      <li class="user__statusItem">
+        <div class="user__statusItemInner">
+          <span class="user__statusCount user__items"></span>
+          <span class="user__statusLabel">items</span>
+        </div>
+      </li>
+    </ul>
     <div class="items">
     </div>
   </section>
@@ -287,8 +282,6 @@ QiitaCardProto.fillItems = function fillItems(items) {
       count       = (this.attr.count <= items.length) ? this.attr.count : items.length,
       container   = this.shadow.querySelector('.items');
 
-  console.log(count);
-
   sortedItems = items.sort(function (a, b) {
     if (a.stock_count < b.stock_count) {
       return 1;
@@ -318,12 +311,9 @@ QiitaCardProto.fillItems = function fillItems(items) {
 };
 
 QiitaCardProto.setStyles = function () {
-  var card        = this.shadow.querySelector('.qiita-card'),
-      status      = this.shadow.querySelector('.user__status'),
-      statusWidth = this.attr.width * 1 + 28;
+  var card        = this.shadow.querySelector('.qiita-card');
 
   card.style.width   = this.attr.width + 'px';
-  status.style.width = statusWidth + 'px';
 };
 
 QiitaCardProto.createdCallback = function () {
