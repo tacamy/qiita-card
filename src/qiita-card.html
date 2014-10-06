@@ -214,16 +214,6 @@
   </article>
 </template>
 
-<template id="qiita-card-item-template">
-  <section class="item">
-    <h2 class="item__title"><a href="#">ターミナルからiOSシミュレータを開く</a></h2>
-    <ul class="item__info">
-      <li class="item__stock"><span class="item__stockCount">6</span>stocks</li>
-      <li class="item__date">2013-07-30</li>
-    </ul>
-  </section>
-</template>
-
 <script>
   'use strict';
 
@@ -252,17 +242,13 @@
   };
 
   QiitaCardProto.fillUser = function fillUser(user) {
-    var card = this.shadow;
-
-    console.log(user);
-
-    var userId    = card.querySelector('.user__id > a'),
-        userImg   = card.querySelector('.user__img > img'),
-        userName  = card.querySelector('.user__name'),
-        userExtra = card.querySelector('.user__extra'),
+    var card          = this.shadow,
+        userId        = card.querySelector('.user__id > a'),
+        userImg       = card.querySelector('.user__img > img'),
+        userName      = card.querySelector('.user__name'),
+        userExtra     = card.querySelector('.user__extra'),
         userFollowers = card.querySelector('.user__followers'),
-        userItems = card.querySelector('.user__items');
-
+        userItems     = card.querySelector('.user__items');
 
     userId.textContent = user.url_name;
     userId.href = user.url;
@@ -300,25 +286,45 @@
   };
 
   QiitaCardProto.fillItems = function fillItems(items) {
-    var item = this.shadow;
+    var card        = this.shadow,
+        sortedItems = [],
+        html        = '',
+        appendEl    = card.querySelector('.items');
 
-    console.log(items);
-    console.log(items.length);
+    sortedItems = items.sort(function (a, b) {
+      if (a.stock_count < b.stock_count) {
+        return 1;
+      }
+      if (a.stock_count > b.stock_count) {
+        return -1;
+      }
+      return 0;
+    });
 
-    // usr.querySelector('.item-title').textContent = items[0].title;
-    // usr.querySelector('.item-count').textContent = items[0].stock_count;
+    for (var i = 0; i < 5; i++) {
+      var title = sortedItems[i].title,
+          date  = sortedItems[i].created_at.match(/^\d+-\d+-\d+/)[0],
+          stock = sortedItems[i].stock_count,
+          url   = sortedItems[i].url;
+
+      html += '<section class="item">';
+      html += '<h2 class="item__title"><a href="' + url + '">' + title + '</a></h2>';
+      html += '<ul class="item__info">';
+      html += '<li class="item__stock"><span class="item__stockCount">' + stock + '</span>stocks</li>';
+      html += '<li class="item__date">' + date + '</li>';
+      html += '</ul>';
+      html += '</section>';
+    }
+
+    console.log('html:', html);
+    appendEl.appendChild(html);
   };
 
   QiitaCardProto.createdCallback = function() {
     this.urlName = this.getAttribute('user');
 
     var template = doc.querySelector("#qiita-card-template"),
-        templateItem = doc.querySelector("#qiita-card-item-template"),
-        card = template.content.cloneNode(true),
-        item = templateItem.content.cloneNode(true);
-
-    console.log('card:', card);
-    console.log('item:', item);
+        card = template.content.cloneNode(true);
 
     this.shadow = this.createShadowRoot();
     this.shadow.appendChild(card);
