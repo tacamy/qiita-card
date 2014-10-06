@@ -180,7 +180,7 @@ ul {
     <ul class="user__status">
       <li class="user__statusItem">
         <div class="user__statusItemInner">
-          <span class="user__statusCount user__contribution">1225</span>
+          <span class="user__statusCount user__contribution"></span>
           <span class="user__statusLabel">contribution</span>
         </div>
       </li>
@@ -215,6 +215,7 @@ var url            = 'https://qiita.com/api/v1/users/',
     doc            = document.currentScript.ownerDocument,
     QiitaCardProto = Object.create(HTMLElement.prototype);
 
+
 QiitaCardProto.getUser = function getJSON() {
   var self = this,
       xhr  = new XMLHttpRequest();
@@ -233,13 +234,14 @@ QiitaCardProto.getUser = function getJSON() {
   xhr.send();
 };
 
+
 QiitaCardProto.fillUser = function fillUser(user) {
-  var userId        = this.shadow.querySelector('.user__id > a'),
-      userImg       = this.shadow.querySelector('.user__img > img'),
-      userName      = this.shadow.querySelector('.user__name'),
-      userExtra     = this.shadow.querySelector('.user__extra'),
-      userFollowers = this.shadow.querySelector('.user__followers'),
-      userItems     = this.shadow.querySelector('.user__items');
+  var userId           = this.shadow.querySelector('.user__id > a'),
+      userImg          = this.shadow.querySelector('.user__img > img'),
+      userName         = this.shadow.querySelector('.user__name'),
+      userExtra        = this.shadow.querySelector('.user__extra'),
+      userFollowers    = this.shadow.querySelector('.user__followers'),
+      userItems        = this.shadow.querySelector('.user__items');
 
   userId.textContent = user.url_name;
   userId.href        = user.url;
@@ -255,8 +257,21 @@ QiitaCardProto.fillUser = function fillUser(user) {
       userExtra.textContent = user.location:
       userExtra.textContent = '';;;
   userFollowers.textContent = user.followers;
-  userItems.textContent = user.items;
+  userItems.textContent     = user.items;
 };
+
+
+QiitaCardProto.fillContribution = function (items) {
+  var contributionCount = 0,
+      userContribution = this.shadow.querySelector('.user__contribution');
+
+  for (var i = 0, l = items.length; i < l; i++) {
+    contributionCount += items[i].stock_count;
+  }
+
+  userContribution.textContent = contributionCount;
+};
+
 
 QiitaCardProto.getItems = function getJSON() {
   var self = this,
@@ -268,7 +283,9 @@ QiitaCardProto.getItems = function getJSON() {
       status = xhr.status;
 
       if ((status >= 200 && status < 300) || status === 304 || status === 0) {
-        self.fillItems(JSON.parse(xhr.response || xhr.responseText));
+        var items = JSON.parse(xhr.response || xhr.responseText);
+        self.fillContribution(items);
+        self.fillItems(items);
       }
     }
   };
@@ -276,13 +293,13 @@ QiitaCardProto.getItems = function getJSON() {
   xhr.send();
 };
 
+
 QiitaCardProto.fillItems = function fillItems(items) {
-  var sortedItems = [],
-      html        = '',
+  var html        = '',
       count       = (this.attr.count <= items.length) ? this.attr.count : items.length,
       container   = this.shadow.querySelector('.items');
 
-  sortedItems = items.sort(function (a, b) {
+  items.sort(function (a, b) {
     if (a.stock_count < b.stock_count) {
       return 1;
     }
@@ -293,10 +310,10 @@ QiitaCardProto.fillItems = function fillItems(items) {
   });
 
   for (var i = 0; i < count; i++) {
-    var title = sortedItems[i].title,
-        date  = sortedItems[i].created_at.match(/^\d+-\d+-\d+/)[0],
-        stock = sortedItems[i].stock_count,
-        url   = sortedItems[i].url;
+    var title = items[i].title,
+        date  = items[i].created_at.match(/^\d+-\d+-\d+/)[0],
+        stock = items[i].stock_count,
+        url   = items[i].url;
 
     html += '<section class="item">';
     html += '<h2 class="item__title"><a href="' + url + '">' + title + '</a></h2>';
@@ -310,11 +327,13 @@ QiitaCardProto.fillItems = function fillItems(items) {
   container.innerHTML = html;
 };
 
+
 QiitaCardProto.setStyles = function () {
   var card        = this.shadow.querySelector('.qiita-card');
 
   card.style.width   = this.attr.width + 'px';
 };
+
 
 QiitaCardProto.createdCallback = function () {
   this.attr = {
@@ -332,10 +351,12 @@ QiitaCardProto.createdCallback = function () {
   this.setStyles();
 };
 
+
 QiitaCardProto.attachedCallback = function () {
-  this.getUser();
   this.getItems();
+  this.getUser();
 };
+
 
 var QiitaCard = document.registerElement('qiita-card', {'prototype': QiitaCardProto});
 </script>
