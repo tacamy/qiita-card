@@ -1,9 +1,7 @@
 <template id="qiita-card-template">
 <style>
 :host {
-  display: block;
-  width: 250px;
-  line-height: 1.2;
+  line-height: 1.4;
   font-size: 13px;
   font-family: sans-serif;
   color: #4a4a4a;
@@ -75,13 +73,13 @@ ul {
   vertical-align: top;
 }
 .user__id {
-  margin-bottom: 5px;
+  margin-bottom: 2px;
   font-size: 15px;
   font-weight: bold;
   word-break: break-all;
 }
 .user__name {
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 }
 .user__extra {
   font-size: 11px;
@@ -90,7 +88,6 @@ ul {
 .user__status {
   display: table;
   table-layout: fixed;
-  width: 248px;
   margin: 0 -14px;
   background: #eef2ea;
   border-width: 1px 0;
@@ -317,7 +314,16 @@ QiitaCardProto.fillItems = function fillItems(items) {
   container.innerHTML = html;
 };
 
-QiitaCardProto.createdCallback = function() {
+QiitaCardProto.setStyles = function () {
+  var card        = this.shadow.querySelector('.qiita-card'),
+      status      = this.shadow.querySelector('.user__status'),
+      statusWidth = this.attr.width * 1 + 28;
+
+  card.style.width   = this.attr.width + 'px';
+  status.style.width = statusWidth + 'px';
+};
+
+QiitaCardProto.createdCallback = function () {
   this.attr = {
     user  : this.getAttribute('user'),
     count : this.getAttribute('count'),
@@ -330,9 +336,10 @@ QiitaCardProto.createdCallback = function() {
 
   this.shadow = this.createShadowRoot();
   this.shadow.appendChild(card);
+  this.setStyles();
 };
 
-QiitaCardProto.attachedCallback = function() {
+QiitaCardProto.attachedCallback = function () {
   this.getUser();
   this.getItems();
 };
