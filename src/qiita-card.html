@@ -258,14 +258,14 @@
     card.querySelector('.user__id > a').textContent = user.url_name;
     card.querySelector('.user__id > a').href = user.url;
     card.querySelector('.user__img > img').src = user.profile_image_url;
-    (user.name !== '' && user.name !== ' ') ?
+    (user.name.trim() !== '') ?
       card.querySelector('.user__name').textContent = user.name:
       card.querySelector('.user__name').textContent = user.url_name;
-    (user.description !== '' && user.description !== ' ') ?
+    (user.description.trim() !== '') ?
       card.querySelector('.user__extra').textContent = user.description:
-      (user.organization !== '' && user.organization !== ' ') ?
+      (user.organization.trim() !== '') ?
         card.querySelector('.user__extra').textContent = user.organization:
-        (user.location !== '' && user.location !== ' ') ?
+        (user.location.trim() !== '') ?
         card.querySelector('.user__extra').textContent = user.location:
         card.querySelector('.user__extra').textContent = '';;;
     card.querySelector('.user__followers').textContent = user.followers;
