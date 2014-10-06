@@ -74,7 +74,7 @@ ul {
   word-break: break-all;
 }
 .user__name {
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 .user__extra {
   font-size: 11px;
@@ -220,7 +220,7 @@ QiitaCardProto.getUser = function getJSON() {
   var self = this,
       xhr  = new XMLHttpRequest();
 
-  xhr.open('GET', url + this.attr.user);
+  xhr.open('GET', url + this.options.user);
   xhr.onreadystatechange = function () {
     if (xhr.readyState === xhr.DONE) {
       status = xhr.status;
@@ -285,7 +285,7 @@ QiitaCardProto.getItems = function getJSON() {
   var self = this,
       xhr  = new XMLHttpRequest();
 
-  xhr.open('GET', url + this.attr.user + urlItems + urlPerPage);
+  xhr.open('GET', url + this.options.user + urlItems + urlPerPage);
   xhr.onreadystatechange = function () {
     if (xhr.readyState === xhr.DONE) {
       status = xhr.status;
@@ -305,8 +305,12 @@ QiitaCardProto.getItems = function getJSON() {
 // 投稿した記事情報を設定
 QiitaCardProto.setItems = function setItems(items) {
   var html        = '',
-      count       = (this.attr.count <= items.length) ? this.attr.count : items.length,
+      count       = this.options.count,
       container   = this.shadow.querySelector('.items');
+
+  if (count > items.length) {
+    count = items.length;
+  }
 
   items.sort(function (a, b) {
     if (a.stock_count < b.stock_count) {
@@ -341,17 +345,17 @@ QiitaCardProto.setItems = function setItems(items) {
 QiitaCardProto.setStyles = function () {
   var card        = this.shadow.querySelector('.qiita-card');
 
-  card.style.width   = this.attr.width;
+  card.style.width   = this.options.width;
 };
 
 
 // カスタムエレメントが生成されたときの処理
 QiitaCardProto.createdCallback = function () {
-  this.attr = {
-    user  : this.getAttribute('user'),
-    count : this.getAttribute('count'),
-    width : this.getAttribute('width'),
-    sort  : this.getAttribute('sort')
+  this.options = {
+    user  : this.getAttribute('user')      || 'tacamy',
+    count : this.getAttribute('count') * 1 || 5,
+    width : this.getAttribute('width')     || '250px',
+    sort  : this.getAttribute('sort')      || 'stock'
   };
 
   var template = doc.querySelector("#qiita-card-template"),
