@@ -284,7 +284,10 @@ QiitaCardProto.getItems = function getJSON() {
 QiitaCardProto.fillItems = function fillItems(items) {
   var sortedItems = [],
       html        = '',
+      count       = (this.attr.count <= items.length) ? this.attr.count : items.length,
       container   = this.shadow.querySelector('.items');
+
+  console.log(count);
 
   sortedItems = items.sort(function (a, b) {
     if (a.stock_count < b.stock_count) {
@@ -296,7 +299,7 @@ QiitaCardProto.fillItems = function fillItems(items) {
     return 0;
   });
 
-  for (var i = 0; i < this.attr.count; i++) {
+  for (var i = 0; i < count; i++) {
     var title = sortedItems[i].title,
         date  = sortedItems[i].created_at.match(/^\d+-\d+-\d+/)[0],
         stock = sortedItems[i].stock_count,
