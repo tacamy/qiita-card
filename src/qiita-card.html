@@ -217,15 +217,15 @@
 <script>
   'use strict';
 
-  var url = 'https://qiita.com/api/v1/users/',
-      urlItems = '/items',
-      urlPerPage = '?per_page=100',
-      doc = document.currentScript.ownerDocument,
+  var url            = 'https://qiita.com/api/v1/users/',
+      urlItems       = '/items',
+      urlPerPage     = '?per_page=100',
+      doc            = document.currentScript.ownerDocument,
       QiitaCardProto = Object.create(HTMLElement.prototype);
 
   QiitaCardProto.getUser = function getJSON() {
     var that = this,
-        xhr = new XMLHttpRequest();
+        xhr  = new XMLHttpRequest();
 
     xhr.open('GET', url + this.urlName);
     xhr.onreadystatechange = function () {
@@ -251,8 +251,8 @@
         userItems     = card.querySelector('.user__items');
 
     userId.textContent = user.url_name;
-    userId.href = user.url;
-    userImg.src = user.profile_image_url;
+    userId.href        = user.url;
+    userImg.src        = user.profile_image_url;
     (user.name.trim() !== '') ?
       userName.textContent = user.name:
       userName.textContent = user.url_name;
@@ -289,7 +289,7 @@
     var card        = this.shadow,
         sortedItems = [],
         html        = '',
-        appendEl    = card.querySelector('.items');
+        container   = card.querySelector('.items');
 
     sortedItems = items.sort(function (a, b) {
       if (a.stock_count < b.stock_count) {
@@ -316,15 +316,14 @@
       html += '</section>';
     }
 
-    console.log('html:', html);
-    appendEl.appendChild(html);
+    container.innerHTML = html;
   };
 
   QiitaCardProto.createdCallback = function() {
     this.urlName = this.getAttribute('user');
 
     var template = doc.querySelector("#qiita-card-template"),
-        card = template.content.cloneNode(true);
+        card     = template.content.cloneNode(true);
 
     this.shadow = this.createShadowRoot();
     this.shadow.appendChild(card);
