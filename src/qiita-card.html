@@ -121,6 +121,10 @@ a.user__statusItemInner:hover .user__statusCount {
 }
 .user__statusLabel {
   display: block;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-size: 11px;
   color: #999;
 }
@@ -395,7 +399,7 @@ QiitaCardProto.createdCallback = function () {
   this.options = {
     user  : this.getAttribute('user'), // 必須
     count : this.getAttribute('count') * 1 || 5,
-    width : this.getAttribute('width')     || '280px',
+    width : this.getAttribute('width')     || '260px',
     sort  : this.getAttribute('sort')      || 'stock'
   };
 
