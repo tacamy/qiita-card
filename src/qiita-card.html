@@ -396,6 +396,16 @@ QiitaCardProto.setStyles = function () {
 
 // カスタムエレメントが生成されたときの処理
 QiitaCardProto.createdCallback = function () {
+  var template = doc.querySelector("#qiita-card-template"),
+      card     = template.content.cloneNode(true);
+
+  this.shadow = this.createShadowRoot();
+  this.shadow.appendChild(card);
+};
+
+
+// カスタムエレメントがHTMLに追加されたときの処理
+QiitaCardProto.attachedCallback = function () {
   this.options = {
     user  : this.getAttribute('user'), // 必須
     count : this.getAttribute('count') * 1 || 5,
@@ -403,17 +413,8 @@ QiitaCardProto.createdCallback = function () {
     sort  : this.getAttribute('sort')      || 'stock'
   };
 
-  var template = doc.querySelector("#qiita-card-template"),
-      card     = template.content.cloneNode(true);
-
-  this.shadow = this.createShadowRoot();
-  this.shadow.appendChild(card);
+  this.getLimit();
   this.setStyles();
-};
-
-
-// カスタムエレメントがHTMLに追加されたときの処理
-QiitaCardProto.attachedCallback = function () {
   this.getItems();
   this.getUser();
 };
