@@ -52,22 +52,22 @@ ul {
 }
 .user__header {
   margin: 15px;
+}
+.user__header:after {
+  content: "";
   display: table;
+  clear: both;
 }
 .user__img {
-  display: table-cell;
-  width: 92px;
-  vertical-align: top;
+  float: left;
+  margin-right: 10px;
 }
 .user__img img {
-  margin-right: 10px;
   border: 1px solid #e8eee4;
   border-radius: 8px;
 }
 .user__info {
-  display: table-cell;
   padding-top: 10px;
-  vertical-align: top;
 }
 .user__id {
   margin-bottom: 2px;
@@ -230,11 +230,29 @@ a.user__statusItemInner:hover .user__statusLabel {
 <script>
 'use strict';
 
-var url            = 'https://qiita.com/api/v1/users/',
-    urlItems       = '/items',
-    urlPerPage     = '?per_page=100',
+var url            = 'https://qiita.com/api/v1/',
     doc            = document.currentScript.ownerDocument,
     QiitaCardProto = Object.create(HTMLElement.prototype);
+
+
+// リクエスト可能数取得
+QiitaCardProto.getLimit = function getJSON() {
+  var self = this,
+      xhr  = new XMLHttpRequest();
+
+  xhr.open('GET', url + '/rate_limit');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === xhr.DONE) {
+      var status = xhr.status;
+
+      if ((status >= 200 && status < 300) || status === 304 || status === 0) {
+        console.log(JSON.parse(xhr.response || xhr.responseText));
+      }
+    }
+  };
+
+  xhr.send();
+};
 
 
 // ユーザー情報を取得
@@ -242,10 +260,10 @@ QiitaCardProto.getUser = function getJSON() {
   var self = this,
       xhr  = new XMLHttpRequest();
 
-  xhr.open('GET', url + this.options.user);
+  xhr.open('GET', url + 'users/' + this.options.user);
   xhr.onreadystatechange = function () {
     if (xhr.readyState === xhr.DONE) {
-      status = xhr.status;
+      var status = xhr.status;
 
       if ((status >= 200 && status < 300) || status === 304 || status === 0) {
         self.setUser(JSON.parse(xhr.response || xhr.responseText));
@@ -310,13 +328,14 @@ QiitaCardProto.setContribution = function (items) {
 
 // 投稿した記事情報を取得
 QiitaCardProto.getItems = function getJSON() {
-  var self = this,
-      xhr  = new XMLHttpRequest();
+  var self    = this,
+      xhr     = new XMLHttpRequest(),
+      perPage = 100;
 
-  xhr.open('GET', url + this.options.user + urlItems + urlPerPage);
+  xhr.open('GET', url + 'users/' + this.options.user + '/items?per_page=' + perPage);
   xhr.onreadystatechange = function () {
     if (xhr.readyState === xhr.DONE) {
-      status = xhr.status;
+      var status = xhr.status;
 
       if ((status >= 200 && status < 300) || status === 304 || status === 0) {
         var items = JSON.parse(xhr.response || xhr.responseText);
