@@ -13,22 +13,26 @@ qiita-card {
 </head>
 <body>
 
+<input type="text" name="user" value="" placeholder="tacamy">
+<input type="text" name="count" value="" placeholder="5">
+<input type="text" name="width" value="" placeholder="260px">
+<input type="text" name="sort" value="" placeholder="date">
+
 <div class="output"><qiita-card user="nakajmg"></qiita-card></div>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-
 <script>
-// var $output = $('.output'),
-//     $input  = $('.input'),
-//     $submit = $('.submit'),
-//     $qiitaCard = $('<qiita-card>');
+$(function () {
+  var $el = $('qiita-card');
 
-// $qiitaCard.attr({
-//   user: 'hokaccha',
-//   count: '10',
-//   width: '350px',
-//   sort: 'date'
-// }).appendTo($output);
+  $('input').on('change', function () {
+    var $this = $(this);
+    var name = $this.attr('name');
+    var val = $this.val();
+
+    $el.attr(name, val);
+  });
+});
 </script>
 
 </body>
