@@ -185,7 +185,7 @@ a.user__statusItemInner:hover .user__statusLabel {
 
 <article class="qiita-card">
   <header class="qiita-card__header">
-    <a class="qiita-card__logo" href="http://qiita.com/"><img src="src/logo.png" alt="" width="30" height="12"></a>
+    <a class="qiita-card__logo" href="http://qiita.com/"><img src="logo.png" alt="" width="30" height="12"></a>
   </header>
   <section class="user">
     <header class="user__header">
@@ -296,7 +296,7 @@ QiitaCardProto.setUser  = function setUser(user) {
   userItems.textContent     = user.items;
 
   (/^https:\/\/si0.twimg.com\/profile_images\//.test(user.profile_image_url)) ?
-    userImg.src = '/src/noimage.png':
+    userImg.src = 'noimage.png':
     userImg.src = user.profile_image_url;
 
   (user.name && user.name.trim()) ?
