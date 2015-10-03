@@ -236,7 +236,7 @@ var url            = 'https://qiita.com/api/v1/',
 
 
 // リクエスト可能数取得
-QiitaCardProto.getLimit = function getJSON() {
+QiitaCardProto.getLimit = function () {
   var self = this,
       xhr  = new XMLHttpRequest();
 
@@ -256,7 +256,7 @@ QiitaCardProto.getLimit = function getJSON() {
 
 
 // ユーザー情報を取得
-QiitaCardProto.getUser = function getJSON() {
+QiitaCardProto.getUser = function () {
   var self = this,
       xhr  = new XMLHttpRequest();
 
@@ -276,7 +276,7 @@ QiitaCardProto.getUser = function getJSON() {
 
 
 // ユーザー情報を設定
-QiitaCardProto.setUser  = function setUser(user) {
+QiitaCardProto.setUser  = function (user) {
   var userId            = this.shadow.querySelector('.user__id > a'),
       userImgLink       = this.shadow.querySelector('.user__img > a'),
       userImg           = this.shadow.querySelector('.user__img > a > img'),
@@ -327,7 +327,7 @@ QiitaCardProto.setContribution = function (items) {
 
 
 // 投稿した記事情報を取得
-QiitaCardProto.getItems = function getJSON() {
+QiitaCardProto.getItems = function () {
   var self    = this,
       xhr     = new XMLHttpRequest(),
       perPage = 100;
@@ -350,7 +350,7 @@ QiitaCardProto.getItems = function getJSON() {
 
 
 // 投稿した記事情報を設定
-QiitaCardProto.setItems = function setItems(items) {
+QiitaCardProto.setItems = function (items) {
   var html        = '',
       count       = this.options.count,
       sort        = this.options.sort,
@@ -413,6 +413,15 @@ QiitaCardProto.setStyles = function () {
 };
 
 
+// 再描画
+QiitaCardProto.refresh = function () {
+  this.getLimit();
+  this.setStyles();
+  this.getItems();
+  this.getUser();
+};
+
+
 // カスタムエレメントが生成されたときの処理
 QiitaCardProto.createdCallback = function () {
   var template = doc.querySelector("#qiita-card-template"),
@@ -432,15 +441,14 @@ QiitaCardProto.attachedCallback = function () {
     sort  : this.getAttribute('sort')      || 'stock'
   };
 
-  this.getLimit();
-  this.setStyles();
-  this.getItems();
-  this.getUser();
+  this.refresh();
 };
 
 // カスタムエレメントの属性が変更されたときの処理
 QiitaCardProto.attributeChangedCallback = function (name, oldValue, newValue) {
-  console.log(name);
+  this.options[name] = newValue;
+
+  this.refresh();
 };
 
 // カスタムエレメントを登録
