@@ -438,6 +438,10 @@ QiitaCardProto.attachedCallback = function () {
   this.getUser();
 };
 
+// カスタムエレメントの属性が変更されたときの処理
+QiitaCardProto.attributeChangedCallback = function (name, oldValue, newValue) {
+  console.log(name);
+};
 
 // カスタムエレメントを登録
 var QiitaCard = document.registerElement('qiita-card', {'prototype': QiitaCardProto});
