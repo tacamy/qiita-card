@@ -236,16 +236,6 @@ const ownerDocument  = document.currentScript.ownerDocument;
 const QiitaCardProto = Object.create(HTMLElement.prototype);
 
 
-// リクエスト可能残数取得
-QiitaCardProto.getLimit = function () {
-  fetch(`${QIITA_API_URL}/rate_limit`)
-    .then(response => response.json())
-    .then(json => {
-      return json.remaining;
-    });
-};
-
-
 // ユーザー情報を取得
 QiitaCardProto.getUser = function () {
   const key = `qc-user-${this.options.user}`;
@@ -253,13 +243,10 @@ QiitaCardProto.getUser = function () {
   fetch(`${QIITA_API_URL}/users/${this.options.user}`)
     .then(response => response.json())
     .then(json => {
-      if (this.getLimit()) {
-        this.setUser(json);
-        this.saveAPI(key, json);
-      } else {
-        this.setUser(this.getLocalAPI(key));
-      }
-    });
+      this.setUser(json);
+      this.saveAPI(key, json);
+    })
+    .catch(err => this.setUser(this.getLocalAPI(key)));
 };
 
 
@@ -271,29 +258,22 @@ QiitaCardProto.getItems = function () {
   fetch(`${QIITA_API_URL}/users/${this.options.user}/items?per_page=${perPage}`)
     .then(response => response.json())
     .then(json => {
-      if (this.getLimit()) {
-        this.setItems(json);
-        this.saveAPI(key, json);
-      } else {
-        this.setItems(this.getLocalAPI(key));
-      }
-    });
+      this.setItems(json);
+      this.saveAPI(key, json);
+    })
+    .catch(err => this.setItems(this.getLocalAPI(key)));
 };
 
 
-// ローカルストレージにAPIを保存
+// ローカルにAPIを保存
 QiitaCardProto.saveAPI = function (key, val) {
-  if (!window.localStorage) return;
-
-  window.localStorage.setItem(key, JSON.stringify(val));
+  window.sessionStorage.setItem(key, JSON.stringify(val));
 };
 
 
-// ローカルストレージからAPIを取得
+// ローカルからAPIを取得
 QiitaCardProto.getLocalAPI = function (key) {
-  if (!window.localStorage) return;
-
-  return JSON.parse(window.localStorage.getItem(key));
+  return JSON.parse(window.sessionStorage.getItem(key));
 };
 
 
@@ -393,16 +373,15 @@ QiitaCardProto.setItems = function (items) {
 };
 
 
-// 属性で指定されたスタイル情報を設定
-QiitaCardProto.setStyles = function () {
+// 属性で指定されたwidthを設定
+QiitaCardProto.setWidth = function () {
   this.shadow.querySelector('.qiita-card').style.width = this.options.width;
 };
 
 
 // 再描画
 QiitaCardProto.render = function () {
-  this.getLimit();
-  this.setStyles();
+  this.setWidth();
   this.getItems();
   this.getUser();
 };
