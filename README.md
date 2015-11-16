@@ -1,5 +1,13 @@
 # qiita-card
 
+`<qiita-card>` is a blog parts of new generation.
+
+This is using following technology.
+
+- WebComponents
+- ES2015 (ES6)
+- [Fetch API](https://fetch.spec.whatwg.org/)
+
 ## How to use
 
 ```html
@@ -9,7 +17,7 @@
   <link rel="import" href="qiita-card.html">
 </head>
 <body>
-  <qiita-card user="tacamy"></qiita-card>
+  <qiita-card user="qiita"></qiita-card>
 </body>
 </html>
 ```
@@ -23,7 +31,7 @@
 - requred
 
 ```html
-<qiita-card user="tacamy"></qiita-card>
+<qiita-card user="qiita"></qiita-card>
 ```
 
 ### Number of items
@@ -32,7 +40,7 @@
 - type: `Number`
 
 ```html
-<qiita-card user="tacamy" count="3"></qiita-card>
+<qiita-card user="qiita" count="3"></qiita-card>
 ```
 
 ### Width
@@ -41,7 +49,7 @@
 - type: `String` ("px" or "%")
 
 ```html
-<qiita-card user="tacamy" width="300px"></qiita-card>
+<qiita-card user="qiita" width="250px"></qiita-card>
 ```
 
 ### Sort
@@ -50,6 +58,5 @@
 - type: `String` ("stock" or "date")
 
 ```html
-<qiita-card user="tacamy" sort="date"></qiita-card>
+<qiita-card user="qiita" sort="stock"></qiita-card>
 ```
-
