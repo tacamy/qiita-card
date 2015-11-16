@@ -240,13 +240,23 @@ const QiitaCardProto = Object.create(HTMLElement.prototype);
 QiitaCardProto.getUser = function () {
   const key = `qc-user-${this.options.user}`;
 
-  fetch(`${QIITA_API_URL}/users/${this.options.user}`)
-    .then(response => response.json())
-    .then(json => {
-      this.setUser(json);
-      this.saveAPI(key, json);
-    })
-    .catch(err => this.setUser(this.getLocalAPI(key)));
+  const promise = new Promise((resolve, reject) => {
+    fetch(`${QIITA_API_URL}/users/${this.options.user}`)
+      .then(response => response.json())
+      .then(json => {
+        if (json.error) {
+          reject(json.error);
+          return;
+        }
+        this.setUser(json);
+        this.saveAPI(key, json);
+        resolve();
+      })
+      // API上限に達した場合は、ローカルに保存したJSONを利用する
+      .catch(err => this.setUser(this.getLocalAPI(key)));
+  });
+
+  return promise;
 };
 
 
@@ -255,13 +265,23 @@ QiitaCardProto.getItems = function () {
   const perPage = 100;
   const key     = `qc-items-${this.options.user}`;
 
-  fetch(`${QIITA_API_URL}/users/${this.options.user}/items?per_page=${perPage}`)
-    .then(response => response.json())
-    .then(json => {
-      this.setItems(json);
-      this.saveAPI(key, json);
-    })
-    .catch(err => this.setItems(this.getLocalAPI(key)));
+  const promise = new Promise((resolve, reject) => {
+    fetch(`${QIITA_API_URL}/users/${this.options.user}/items?per_page=${perPage}`)
+      .then(response => response.json())
+      .then(json => {
+        if (json.error) {
+          reject(json.error);
+          return;
+        }
+        this.setItems(json);
+        this.saveAPI(key, json);
+        resolve();
+      })
+      // API上限に達した場合は、ローカルに保存したJSONを利用する
+      .catch(err => this.setItems(this.getLocalAPI(key)));
+  });
+
+  return promise;
 };
 
 
@@ -346,6 +366,7 @@ QiitaCardProto.setItems = function (items) {
   const container        = this.shadow.querySelector('.items');
   const trimHyphen       = str => str.match(/^\d+-\d+-\d+/)[0].replace(/-/g, '');
 
+  // 投稿が0件の場合の処理
   if (!items || !items.length) {
     count = 0;
     items = [];
@@ -389,8 +410,11 @@ QiitaCardProto.setWidth = function () {
 // 再描画
 QiitaCardProto.render = function () {
   this.setWidth();
-  this.getItems();
-  this.getUser();
+  this.getUser()
+    .then(() => {
+      this.getItems();
+    })
+    .catch(text => window.alert(text));
 };
 
 
