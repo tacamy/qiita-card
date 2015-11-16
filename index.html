@@ -7,6 +7,9 @@
 <link rel="import" href="qiita-card.html">
 <link href='https://fonts.googleapis.com/css?family=Amatic+SC' rel='stylesheet' type='text/css'>
 <style>
+.l-demo-header {
+  text-align: center;
+}
 .l-demo-contents {
   display: table;
   margin: 0 auto;
@@ -18,12 +21,16 @@
   vertical-align: top;
 }
 .demo-h1 {
+  margin-bottom: 0;
   font-size: 64px;
   font-family: 'Amatic SC', cursive;
-  text-align: center;
 }
 .demo-h2 {
   font-size: 32px;
+  font-family: 'Amatic SC', cursive;
+}
+.demo-description {
+  font-size: 24px;
   font-family: 'Amatic SC', cursive;
 }
 .demo-options {
@@ -59,7 +66,10 @@
 </head>
 <body>
 
-<h1 class="demo-h1">&lt;qiita-card&gt; Demo Page</h1>
+<header class="l-demo-header">
+  <h1 class="demo-h1">&lt;qiita-card&gt; Demo Page</h1>
+  <p class="demo-description">&lt;qiita-card&gt; is a blog parts of new generation.</p>
+</header>
 
 <div class="l-demo-contents">
   <section class="l-demo-contents__option">
@@ -67,7 +77,7 @@
     <ul class="demo-options">
       <li class="demo-options__item">
         <span class="demo-options__label">User ID</span>
-        <input class="demo-options__textbox" type="text" name="user" value="" placeholder="tacamy">
+        <input class="demo-options__textbox" type="text" name="user" value="" placeholder="qiita">
       </li>
       <li class="demo-options__item">
         <span class="demo-options__label">Number of items</span>
@@ -75,12 +85,12 @@
       </li>
       <li class="demo-options__item">
         <span class="demo-options__label">Width (px or %)</span>
-        <input class="demo-options__textbox" type="text" name="width" value="" placeholder="300px">
+        <input class="demo-options__textbox" type="text" name="width" value="" placeholder="250px">
       </li>
       <li class="demo-options__item">
         <span class="demo-options__label">Sort by</span>
         <select class="demo-options__select" name="sort">
-          <option value="stock">Stock</option>
+          <option value="stock" selected>Stock</option>
           <option value="date">Date</option>
         </select>
       </li>
@@ -89,7 +99,7 @@
   <section class="l-demo-contents__preview">
     <h2 class="demo-h2">Preview</h2>
     <div class="demo-preview">
-      <qiita-card user="nakajmg"></qiita-card>
+      <qiita-card user="qiita"></qiita-card>
     </div>
   </section>
 </div>
