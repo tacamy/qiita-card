@@ -236,7 +236,7 @@ const ownerDocument  = document.currentScript.ownerDocument;
 const QiitaCardProto = Object.create(HTMLElement.prototype);
 
 
-// リクエスト可能数取得
+// リクエスト可能残数取得
 QiitaCardProto.getLimit = function () {
   fetch(`${QIITA_API_URL}/rate_limit`)
     .then(response => response.json())
@@ -253,7 +253,7 @@ QiitaCardProto.getUser = function () {
   fetch(`${QIITA_API_URL}/users/${this.options.user}`)
     .then(response => response.json())
     .then(json => {
-      if (this.getLimit) {
+      if (this.getLimit()) {
         this.setUser(json);
         this.saveAPI(key, json);
       } else {
@@ -271,7 +271,7 @@ QiitaCardProto.getItems = function () {
   fetch(`${QIITA_API_URL}/users/${this.options.user}/items?per_page=${perPage}`)
     .then(response => response.json())
     .then(json => {
-      if (this.getLimit) {
+      if (this.getLimit()) {
         this.setItems(json);
         this.saveAPI(key, json);
       } else {
