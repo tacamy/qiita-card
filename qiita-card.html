@@ -68,7 +68,7 @@ ul {
 }
 .user__info {
   overflow: auto;
-  padding-top: 5px;
+  padding-top: 10px;
 }
 .user__id {
   margin-bottom: 2px;
@@ -326,6 +326,10 @@ QiitaCardProto.setUser = function (user) {
 
 // Contribution値を計算
 QiitaCardProto.calcContribution = function (items) {
+  if (!items.length) {
+    return 0;
+  }
+
   let total = items.reduce((prev, current) => {
     return { stock_count: prev.stock_count + current.stock_count };
   });
@@ -342,7 +346,10 @@ QiitaCardProto.setItems = function (items) {
   const container        = this.shadow.querySelector('.items');
   const trimHyphen       = str => str.match(/^\d+-\d+-\d+/)[0].replace(/-/g, '');
 
-  if (count > items.length) {
+  if (!items || !items.length) {
+    count = 0;
+    items = [];
+  } else if (count > items.length) {
     count = items.length;
   }
 
