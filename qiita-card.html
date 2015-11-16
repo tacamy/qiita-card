@@ -236,11 +236,30 @@ const ownerDocument  = document.currentScript.ownerDocument;
 const QiitaCardProto = Object.create(HTMLElement.prototype);
 
 
+// APIの残りリクエスト可能回数を取得
+QiitaCardProto.getLimit = function () {
+  let promise = new Promise((resolve, reject) => {
+    fetch(`${QIITA_API_URL}/rate_limit`)
+      .then(response => response.json())
+      .then(json => {
+        if (json.remaining > 0) {
+          resolve();
+        } else {
+          reject();
+        }
+      })
+      .catch(err => console.error(err));
+  });
+
+  return promise;
+};
+
+
 // ユーザー情報を取得
 QiitaCardProto.getUser = function () {
   const key = `qc-user-${this.options.user}`;
 
-  const promise = new Promise((resolve, reject) => {
+  let promise = new Promise((resolve, reject) => {
     fetch(`${QIITA_API_URL}/users/${this.options.user}`)
       .then(response => response.json())
       .then(json => {
@@ -248,12 +267,18 @@ QiitaCardProto.getUser = function () {
           reject(json.error);
           return;
         }
-        this.setUser(json);
-        this.saveAPI(key, json);
+
+        this.getLimit()
+          .then(() => {
+            this.setUser(json);
+            this.saveAPI(key, json);
+          })
+          // API上限に達した場合は、ローカルに保存したJSONを利用する
+          .catch(() => this.setUser(this.getLocalAPI(key)));
+
         resolve();
       })
-      // API上限に達した場合は、ローカルに保存したJSONを利用する
-      .catch(err => this.setUser(this.getLocalAPI(key)));
+      .catch(err => console.error(err));
   });
 
   return promise;
@@ -265,7 +290,7 @@ QiitaCardProto.getItems = function () {
   const perPage = 100;
   const key     = `qc-items-${this.options.user}`;
 
-  const promise = new Promise((resolve, reject) => {
+  let promise = new Promise((resolve, reject) => {
     fetch(`${QIITA_API_URL}/users/${this.options.user}/items?per_page=${perPage}`)
       .then(response => response.json())
       .then(json => {
@@ -273,12 +298,18 @@ QiitaCardProto.getItems = function () {
           reject(json.error);
           return;
         }
-        this.setItems(json);
-        this.saveAPI(key, json);
+
+        this.getLimit()
+          .then(() => {
+            this.setItems(json);
+            this.saveAPI(key, json);
+          })
+          // API上限に達した場合は、ローカルに保存したJSONを利用する
+          .catch(() => this.setItems(this.getLocalAPI(key)));
+
         resolve();
       })
-      // API上限に達した場合は、ローカルに保存したJSONを利用する
-      .catch(err => this.setItems(this.getLocalAPI(key)));
+      .catch(err => console.error(err));
   });
 
   return promise;
@@ -411,9 +442,7 @@ QiitaCardProto.setWidth = function () {
 QiitaCardProto.render = function () {
   this.setWidth();
   this.getUser()
-    .then(() => {
-      this.getItems();
-    })
+    .then(() => this.getItems())
     .catch(text => window.alert(text));
 };
 
@@ -447,6 +476,7 @@ QiitaCardProto.attributeChangedCallback = function (name, oldValue, newValue) {
 
   this.render();
 };
+
 
 // カスタムエレメントを登録
 window.QiitaCard = document.registerElement('qiita-card', {
