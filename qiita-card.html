@@ -247,7 +247,7 @@ QiitaCardProto.getLimit = function () {
 
 // ユーザー情報を取得
 QiitaCardProto.getUser = function () {
-  const key = `user-${this.options.user}`;
+  const key = `qc-user-${this.options.user}`;
 
   fetch(`${QIITA_API_URL}/users/${this.options.user}`)
     .then(response => response.json())
@@ -265,7 +265,7 @@ QiitaCardProto.getUser = function () {
 // 投稿した記事情報を取得
 QiitaCardProto.getItems = function () {
   const perPage = 100;
-  const key     = `items-${this.options.user}`;
+  const key     = `qc-items-${this.options.user}`;
 
   fetch(`${QIITA_API_URL}/users/${this.options.user}/items?per_page=${perPage}`)
     .then(response => response.json())
