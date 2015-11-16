@@ -2,7 +2,7 @@
 
 The `<qiita-card>` is one of blog parts of new generation.
 
-This uses following technologys.
+This uses following technologies.
 
 - WebComponents
 - ES2015 (ES6)
