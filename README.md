@@ -1,6 +1,6 @@
 # qiita-card
 
-The `<qiita-card>` is one of blog parts of new generation.
+The `<qiita-card>` is one of blog parts of next generation.
 
 This uses following technologies.
 
@@ -46,7 +46,7 @@ This uses following technologies.
 ### Width
 
 - attribute: `width`
-- type: `String` ("px" or "%")
+- type: `String` (`"px"` or `"%"`)
 
 ```html
 <qiita-card user="qiita" width="250px"></qiita-card>
@@ -55,7 +55,7 @@ This uses following technologies.
 ### Sort
 
 - attribute: `sort`
-- type: `String` ("stock" or "date")
+- type: `String` (`"stock"` or `"date"`)
 
 ```html
 <qiita-card user="qiita" sort="stock"></qiita-card>
