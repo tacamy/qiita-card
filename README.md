@@ -1,8 +1,8 @@
 # qiita-card
 
-`<qiita-card>` is a blog parts of new generation.
+The `<qiita-card>` is one of blog parts of new generation.
 
-This is using following technology.
+This uses following technologys.
 
 - WebComponents
 - ES2015 (ES6)
