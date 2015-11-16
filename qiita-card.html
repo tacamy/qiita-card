@@ -185,7 +185,7 @@ a.user__statusItemInner:hover .user__statusLabel {
 
 <article class="qiita-card">
   <header class="qiita-card__header">
-    <a class="qiita-card__logo" href="http://qiita.com/"><img src="logo.png" alt="" width="30" height="12"></a>
+    <a class="qiita-card__logo" href="http://qiita.com/"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAAYCAQAAAAMyFbZAAADVElEQVR4AcXVXWjVdRzH8fc5bu7s6FwohDnXwzY3da6MkFAcUaKVFVoIGYEXPWjgRRRBIyUhhHJmIRFkqFl5UQotaaKZJi1LanksH/JhdrHQUIcOt52d6bbeXfwPh78Hz9yE8PW+/cMH/hffX4SbJI8QpzKXmcSIcIVDNHKArv9tWDKms5RabicwjYk0sJFsFZTyC92ZrwrYx40wqMg19qt63C1u8lcDjVZJqEpb7LbefBEX2mGXi0TEcl/2IRlciBj3G1XXWm1MxHzH+aYX1MOWSaYZqu61WMTXVF0lIj6lrh/K8HC3qq3Okqzuco96xBJJF/NtG50tIpa4zk1W3Ojws+p5a+QaFblP3WiBXLcn1Q8kR2U+Ed7A0f6mLpUc3Wu3fc6UdHX+5IMiYr4fuz3zPx63y3aPpTvqWyLiSOs8aa+qp33dR2x2Oc5RD1osOVuvrjQiIn6hPiMiFnjcfieIiI/ZadhmESttUrXVo560X+1QP8/jfmAHl8htF89TSyHdAHQAlwnIRdroJ5DHSHZSDwwDCvkLGM9XVJNgGTsBmMirvAhcyONO4BADaeESVYyim4FFgRb2ElZPNXuYR5LAcRbTykoKogi0M5AkHcQoYDBihE1mHhd5iSRhu4HhUaJAEQMpJM5lehm6B4iznVNcrRgwShtwDwMpYwzHaGfoRgEHyBYBiLIbmE8xudUC+0kxdAIRrinK75xiCgvIpYYlQCPXFwF6CUsCk3INt7EaWEEN11LEu8TZQmKQwyMI+5krzGU0V+sEIlHgMxooZSvTyHYbDczhKMtJcX1nSfEwt5DBQRoZzzquVgn0RYEeXuB7qviRZZRD2nCW0MQsIEELg5HgW8ayljEA3AHAG5xmAQ3cTSBOHe8DPRhU6CZVUzb7iRv8wX9UPWGvuib0SGxWn86czMOmrJB0kz2hnnObf3rGGSJON6Fqs5/6nW0GNiCZZttkhxk2+5xxF6v6kfki4ju2+mjmkfjahKWSaZK77FH1lPNFxLF+6FkDnb7nQv92VUQIK2Eq5cQ4wxH+IPAKq9nGIpIAjGIE7fQQuJU8zvIvYRVM4Tz7ETIKuY9i5ADngHEks4eDUx8lRQrSJrCCHXxJH4OVTy+QbRjQT1pEbo7/AGD6+J2PCRtdAAAAAElFTkSuQmCC" alt="Qiita" width="30" height="12"></a>
   </header>
   <section class="user">
     <header class="user__header">
@@ -230,191 +230,176 @@ a.user__statusItemInner:hover .user__statusLabel {
 <script>
 'use strict';
 
-var url            = 'https://qiita.com/api/v1/',
-    doc            = document.currentScript.ownerDocument,
-    QiitaCardProto = Object.create(HTMLElement.prototype);
+const QIITA_API_URL  = 'https://qiita.com/api/v1';
+const ownerDocument  = document.currentScript.ownerDocument;
+const QiitaCardProto = Object.create(HTMLElement.prototype);
 
 
 // リクエスト可能数取得
 QiitaCardProto.getLimit = function () {
-  var self = this,
-      xhr  = new XMLHttpRequest();
-
-  xhr.open('GET', url + '/rate_limit');
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === xhr.DONE) {
-      var status = xhr.status;
-
-      if ((status >= 200 && status < 300) || status === 304 || status === 0) {
-        console.log(JSON.parse(xhr.response || xhr.responseText));
-      }
-    }
-  };
-
-  xhr.send();
+  fetch(`${QIITA_API_URL}/rate_limit`)
+    .then(response => response.json())
+    .then(json => {
+      return json.remaining;
+    });
 };
 
 
 // ユーザー情報を取得
 QiitaCardProto.getUser = function () {
-  var self = this,
-      xhr  = new XMLHttpRequest();
+  const key = `user-${this.options.user}`;
 
-  xhr.open('GET', url + 'users/' + this.options.user);
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === xhr.DONE) {
-      var status = xhr.status;
-
-      if ((status >= 200 && status < 300) || status === 304 || status === 0) {
-        self.setUser(JSON.parse(xhr.response || xhr.responseText));
+  fetch(`${QIITA_API_URL}/users/${this.options.user}`)
+    .then(response => response.json())
+    .then(json => {
+      if (this.getLimit) {
+        this.setUser(json);
+        this.saveAPI(key, json);
+      } else {
+        this.setUser(this.getLocalAPI(key));
       }
-    }
-  };
-
-  xhr.send();
-};
-
-
-// ユーザー情報を設定
-QiitaCardProto.setUser  = function (user) {
-  var userId            = this.shadow.querySelector('.user__id > a'),
-      userImgLink       = this.shadow.querySelector('.user__img > a'),
-      userImg           = this.shadow.querySelector('.user__img > a > img'),
-      userName          = this.shadow.querySelector('.user__name'),
-      userExtra         = this.shadow.querySelector('.user__extra'),
-      userFollowersLink = this.shadow.querySelector('.user__followers-link'),
-      userFollowers     = this.shadow.querySelector('.user__followers'),
-      userItemsLink     = this.shadow.querySelector('.user__items-link'),
-      userItems         = this.shadow.querySelector('.user__items');
-
-  userId.textContent        = user.url_name;
-  userId.href               = user.url;
-  userImgLink.href          = user.url;
-  userFollowersLink.href    = user.url + '/followers';
-  userFollowers.textContent = user.followers;
-  userItemsLink.href        = user.url + '/items';
-  userItems.textContent     = user.items;
-
-  (/^https:\/\/si0.twimg.com\/profile_images\//.test(user.profile_image_url)) ?
-    userImg.src = 'noimage.png':
-    userImg.src = user.profile_image_url;
-
-  (user.name && user.name.trim()) ?
-    userName.textContent = user.name:
-    userName.textContent = user.url_name;
-
-  (user.description && user.description.trim()) ?
-    userExtra.textContent = user.description:
-    (user.organization && user.organization.trim()) ?
-      userExtra.textContent = user.organization:
-      (user.location && user.location.trim()) ?
-      userExtra.textContent = user.location:
-      userExtra.textContent = '';;;
-};
-
-
-// Contribution値を設定
-QiitaCardProto.setContribution = function (items) {
-  var contributionCount = 0,
-      userContribution = this.shadow.querySelector('.user__contribution');
-
-  for (var i = 0, l = items.length; i < l; i++) {
-    contributionCount += items[i].stock_count;
-  }
-
-  userContribution.textContent = contributionCount;
+    });
 };
 
 
 // 投稿した記事情報を取得
 QiitaCardProto.getItems = function () {
-  var self    = this,
-      xhr     = new XMLHttpRequest(),
-      perPage = 100;
+  const perPage = 100;
+  const key     = `items-${this.options.user}`;
 
-  xhr.open('GET', url + 'users/' + this.options.user + '/items?per_page=' + perPage);
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === xhr.DONE) {
-      var status = xhr.status;
-
-      if ((status >= 200 && status < 300) || status === 304 || status === 0) {
-        var items = JSON.parse(xhr.response || xhr.responseText);
-        self.setContribution(items);
-        self.setItems(items);
+  fetch(`${QIITA_API_URL}/users/${this.options.user}/items?per_page=${perPage}`)
+    .then(response => response.json())
+    .then(json => {
+      if (this.getLimit) {
+        this.setItems(json);
+        this.saveAPI(key, json);
+      } else {
+        this.setItems(this.getLocalAPI(key));
       }
-    }
-  };
+    });
+};
 
-  xhr.send();
+
+// ローカルストレージにAPIを保存
+QiitaCardProto.saveAPI = function (key, val) {
+  if (!window.localStorage) return;
+
+  window.localStorage.setItem(key, JSON.stringify(val));
+};
+
+
+// ローカルストレージからAPIを取得
+QiitaCardProto.getLocalAPI = function (key) {
+  if (!window.localStorage) return;
+
+  return JSON.parse(window.localStorage.getItem(key));
+};
+
+
+// ユーザー情報を設定
+QiitaCardProto.setUser = function (user) {
+  const userId            = this.shadow.querySelector('.user__id > a');
+  const userImgLink       = this.shadow.querySelector('.user__img > a');
+  const userImg           = this.shadow.querySelector('.user__img > a > img');
+  const userName          = this.shadow.querySelector('.user__name');
+  const userExtra         = this.shadow.querySelector('.user__extra');
+  const userFollowersLink = this.shadow.querySelector('.user__followers-link');
+  const userFollowers     = this.shadow.querySelector('.user__followers');
+  const userItemsLink     = this.shadow.querySelector('.user__items-link');
+  const userItems         = this.shadow.querySelector('.user__items');
+
+  userId.textContent           = user.url_name;
+  userId.href                  = user.url;
+  userImgLink.href             = user.url;
+  userFollowersLink.href       = `${user.url}/followers`;
+  userFollowers.textContent    = user.followers;
+  userItemsLink.href           = `${user.url}/items`;
+  userItems.textContent        = user.items;
+
+  // プロフィール画像がない場合は代替画像を表示
+  if (/^https:\/\/si0.twimg.com\/profile_images\//.test(user.profile_image_url)) {
+    userImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAAllBMVEX////o7uTp7+X4+vfr8Of+/v7y9vDt8urq7+b2+PT8/fvu8uvx9e/7/Pr8/Pvs8eny9fD3+fb9/fzy9e/+//75+/j6/Pr5+vfp7uXu8+vp7+b9/v38/fzw9O31+PP+/v3w9O76+/nv8+3s8ejv8+zu8urx9O7q8Of2+fX2+PXz9vD4+fbr8Oju8+zv9O3///73+fX09/K8MWdZAAABzklEQVR4Xu3Xx27kQAxF0XerlNU5OOc8Mfz/z81GwMBAm03agr0Yn+VbCCTEUlH6P336NGvXx0WCVByv25neaFoVPFNUU71ertmhznqdg5oX1AeKKxcYFqWCujmmeaeQ6wYbzbUCcmKvlAP1JRySu8auwaXp5LKZ4zTfyGOB20IOBwR4JrwmoNZemZDsKXDUEqcM4D6XZb5n8FI8la1iQPUseDGuZHtkcKPBDYPdceHsOK2kXBRZWiXAiGeytAyupC5B6qQrwIhbWSYMltIa4Ku0BIx4LUvP4Ey6BbiVzgAj7mUpGEhKAEkSYMSFLGnHA0vAiJMsxFvG98D876V8Ays+kiXFx6aRpYgP9ndZeqJHj16WCdGPAxPf0QP6w/L0cCjZiFtZpoTNZHokqJCtIqiSxu15+s6XVPwafeeLPr6KfMSypNK/zpXjLpwns3deieNLe8C2wUaz/dgfH6lMGFKpqC2mraImmCaKajA1vxRziI2smAdsPChkc4KNk40iMozb8zl7nY831cRne4nDUn53OPyU2+URjNrzEy6/5fUDlzs5neJzdCmfFqcv8ulxOpbLCrdTeVzg1sqjxq2XQ0fASvv9IeBC+83fth/+BdHwHT1g8wDeAAAAAElFTkSuQmCC';
+  } else {
+    userImg.src = user.profile_image_url;
+  }
+
+  // ユーザー名が設定されていなければ、ユーザーIDを表示
+  if (user.name) {
+    userName.textContent = user.name;
+  } else {
+    userName.textContent = user.url_name;
+  }
+
+  // descriptionがなければ代用情報を表示
+  if (user.description) {
+    userExtra.textContent = user.description;
+  } else if (user.organization) {
+    userExtra.textContent = user.organization;
+  } else if (user.location) {
+    userExtra.textContent = user.location;
+  } else {
+    userExtra.textContent = '';
+  }
+};
+
+
+// Contribution値を計算
+QiitaCardProto.calcContribution = function (items) {
+  let total = items.reduce((prev, current) => {
+    return { stock_count: prev.stock_count + current.stock_count };
+  });
+
+  return total.stock_count;
 };
 
 
 // 投稿した記事情報を設定
 QiitaCardProto.setItems = function (items) {
-  var html        = '',
-      count       = this.options.count,
-      sort        = this.options.sort,
-      container   = this.shadow.querySelector('.items');
+  let   html             = '';
+  let   count            = this.options.count;
+  const userContribution = this.shadow.querySelector('.user__contribution');
+  const container        = this.shadow.querySelector('.items');
+  const trimHyphen       = str => str.match(/^\d+-\d+-\d+/)[0].replace(/-/g, '');
 
   if (count > items.length) {
     count = items.length;
   }
 
-  if (sort === 'stock') {
-    items.sort(function (a, b) {
-      if (a.stock_count < b.stock_count) {
-        return 1;
-      }
-      if (a.stock_count > b.stock_count) {
-        return -1;
-      }
-      return 0;
-    });
-  }
-  else if (sort === 'date') {
-    items.sort(function (a, b) {
-      var dateA = a.created_at.match(/^\d+-\d+-\d+/)[0].replace(/-/g, ''),
-          dateB = b.created_at.match(/^\d+-\d+-\d+/)[0].replace(/-/g, '');
-
-      if (dateA < dateB) {
-        return 1;
-      }
-      if (dateA > dateB) {
-        return -1;
-      }
-      return 0;
-    });
+  // 指定した順序でソート
+  if (this.options.sort === 'stock') {
+    items.sort((a, b) => b.stock_count - a.stock_count);
+  } else if (this.options.sort === 'date') {
+    items.sort((a, b) => trimHyphen(b.created_at) - trimHyphen(a.created_at));
   }
 
-  for (var i = 0; i < count; i++) {
-    var title = items[i].title,
-        date  = items[i].created_at.match(/^\d+-\d+-\d+/)[0],
-        stock = items[i].stock_count,
-        url   = items[i].url;
+  // 指定した件数のみ出力
+  items.some((item, index) => {
+    if (index >= count) return true;
 
-    html += '<section class="item">';
-    html += '<h2 class="item__title"><a href="' + url + '">' + title + '</a></h2>';
-    html += '<ul class="item__info">';
-    html += '<li class="item__stock"><span class="item__stockCount">' + stock + '</span>stocks</li>';
-    html += '<li class="item__date">' + date + '</li>';
-    html += '</ul>';
-    html += '</section>';
-  }
+    html += `<section class="item">
+              <h2 class="item__title"><a href="${item.url}">${item.title}</a></h2>
+              <ul class="item__info">
+                <li class="item__stock"><span class="item__stockCount">${item.stock_count}</span>stocks</li>
+                <li class="item__date">${item.created_at.match(/^\d+-\d+-\d+/)[0]}</li>
+              </ul>
+            </section>`;
+  });
 
   container.innerHTML = html;
+
+  // contribution値を設定
+  userContribution.textContent = this.calcContribution(items);
 };
 
 
 // 属性で指定されたスタイル情報を設定
 QiitaCardProto.setStyles = function () {
-  var card        = this.shadow.querySelector('.qiita-card');
-
-  card.style.width   = this.options.width;
+  this.shadow.querySelector('.qiita-card').style.width = this.options.width;
 };
 
 
 // 再描画
-QiitaCardProto.refresh = function () {
+QiitaCardProto.render = function () {
   this.getLimit();
   this.setStyles();
   this.getItems();
@@ -424,8 +409,8 @@ QiitaCardProto.refresh = function () {
 
 // カスタムエレメントが生成されたときの処理
 QiitaCardProto.createdCallback = function () {
-  var template = doc.querySelector("#qiita-card-template"),
-      card     = template.content.cloneNode(true);
+  const template = ownerDocument.querySelector("#qiita-card-template");
+  const card     = template.content.cloneNode(true);
 
   this.shadow = this.createShadowRoot();
   this.shadow.appendChild(card);
@@ -437,20 +422,23 @@ QiitaCardProto.attachedCallback = function () {
   this.options = {
     user  : this.getAttribute('user'), // 必須
     count : this.getAttribute('count') * 1 || 5,
-    width : this.getAttribute('width')     || '260px',
+    width : this.getAttribute('width')     || '250px',
     sort  : this.getAttribute('sort')      || 'stock'
   };
 
-  this.refresh();
+  this.render();
 };
+
 
 // カスタムエレメントの属性が変更されたときの処理
 QiitaCardProto.attributeChangedCallback = function (name, oldValue, newValue) {
   this.options[name] = newValue;
 
-  this.refresh();
+  this.render();
 };
 
 // カスタムエレメントを登録
-var QiitaCard = document.registerElement('qiita-card', {'prototype': QiitaCardProto});
+window.QiitaCard = document.registerElement('qiita-card', {
+  prototype: QiitaCardProto
+});
 </script>
