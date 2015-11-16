@@ -257,7 +257,8 @@ QiitaCardProto.getLimit = function () {
 
 // ユーザー情報を取得
 QiitaCardProto.getUser = function () {
-  const key = `qc-user-${this.options.user}`;
+  let key    = `qc-user-${this.options.user}`;
+  let oldKey = `qc-user-${this.options.oldUser}`;
 
   let promise = new Promise((resolve, reject) => {
     fetch(`${QIITA_API_URL}/users/${this.options.user}`)
@@ -271,6 +272,7 @@ QiitaCardProto.getUser = function () {
         this.getLimit()
           .then(() => {
             this.setUser(json);
+            this.clearLocalAPI(oldKey);
             this.saveAPI(key, json);
           })
           // API上限に達した場合は、ローカルに保存したJSONを利用する
@@ -288,7 +290,8 @@ QiitaCardProto.getUser = function () {
 // 投稿した記事情報を取得
 QiitaCardProto.getItems = function () {
   const perPage = 100;
-  const key     = `qc-items-${this.options.user}`;
+  let   key     = `qc-items-${this.options.user}`;
+  let   oldKey  = `qc-items-${this.options.oldUser}`;
 
   let promise = new Promise((resolve, reject) => {
     fetch(`${QIITA_API_URL}/users/${this.options.user}/items?per_page=${perPage}`)
@@ -302,6 +305,7 @@ QiitaCardProto.getItems = function () {
         this.getLimit()
           .then(() => {
             this.setItems(json);
+            this.clearLocalAPI(oldKey);
             this.saveAPI(key, json);
           })
           // API上限に達した場合は、ローカルに保存したJSONを利用する
@@ -325,6 +329,12 @@ QiitaCardProto.saveAPI = function (key, val) {
 // ローカルからAPIを取得
 QiitaCardProto.getLocalAPI = function (key) {
   return JSON.parse(window.sessionStorage.getItem(key));
+};
+
+
+// ローカルのAPIをクリア
+QiitaCardProto.clearLocalAPI = function (key) {
+  window.sessionStorage.removeItem(key);
 };
 
 
@@ -472,6 +482,9 @@ QiitaCardProto.attachedCallback = function () {
 
 // カスタムエレメントの属性が変更されたときの処理
 QiitaCardProto.attributeChangedCallback = function (name, oldValue, newValue) {
+  if (name === 'user') {
+    this.options.oldUser = oldValue;
+  }
   this.options[name] = newValue;
 
   this.render();
