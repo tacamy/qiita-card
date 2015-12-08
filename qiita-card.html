@@ -234,7 +234,7 @@ a.user__statusItemInner:hover .user__statusLabel {
 const QIITA_API_URL  = 'https://qiita.com/api/v1';
 const ownerDocument  = document.currentScript.ownerDocument;
 const QiitaCardProto = Object.create(HTMLElement.prototype);
-
+const PROFILE_IMAGE  = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAAllBMVEX////o7uTp7+X4+vfr8Of+/v7y9vDt8urq7+b2+PT8/fvu8uvx9e/7/Pr8/Pvs8eny9fD3+fb9/fzy9e/+//75+/j6/Pr5+vfp7uXu8+vp7+b9/v38/fzw9O31+PP+/v3w9O76+/nv8+3s8ejv8+zu8urx9O7q8Of2+fX2+PXz9vD4+fbr8Oju8+zv9O3///73+fX09/K8MWdZAAABzklEQVR4Xu3Xx27kQAxF0XerlNU5OOc8Mfz/z81GwMBAm03agr0Yn+VbCCTEUlH6P336NGvXx0WCVByv25neaFoVPFNUU71ertmhznqdg5oX1AeKKxcYFqWCujmmeaeQ6wYbzbUCcmKvlAP1JRySu8auwaXp5LKZ4zTfyGOB20IOBwR4JrwmoNZemZDsKXDUEqcM4D6XZb5n8FI8la1iQPUseDGuZHtkcKPBDYPdceHsOK2kXBRZWiXAiGeytAyupC5B6qQrwIhbWSYMltIa4Ku0BIx4LUvP4Ey6BbiVzgAj7mUpGEhKAEkSYMSFLGnHA0vAiJMsxFvG98D876V8Ays+kiXFx6aRpYgP9ndZeqJHj16WCdGPAxPf0QP6w/L0cCjZiFtZpoTNZHokqJCtIqiSxu15+s6XVPwafeeLPr6KfMSypNK/zpXjLpwns3deieNLe8C2wUaz/dgfH6lMGFKpqC2mraImmCaKajA1vxRziI2smAdsPChkc4KNk40iMozb8zl7nY831cRne4nDUn53OPyU2+URjNrzEy6/5fUDlzs5neJzdCmfFqcv8ulxOpbLCrdTeVzg1sqjxq2XQ0fASvv9IeBC+83fth/+BdHwHT1g8wDeAAAAAElFTkSuQmCC';
 
 // 要素を取得する
 QiitaCardProto.getEl = function () {
@@ -255,120 +255,87 @@ QiitaCardProto.getEl = function () {
 
 
 // APIの残りリクエスト可能回数を取得
-QiitaCardProto.getLimit = function () {
-  let promise = new Promise((resolve, reject) => {
-    fetch(`${QIITA_API_URL}/rate_limit`)
-      .then(response => response.json())
-      .then(json => {
-        if (json.remaining > 0) {
-          resolve();
-        } else {
-          reject();
-        }
-      })
-      .catch(err => console.error(err));
-  });
+QiitaCardProto.isLimit = function () {
+  const url = `${QIITA_API_URL}/rate_limit`;
 
-  return promise;
+  return fetch(url)
+    .then(response => response.json())
+    .then(json => json.remaining ? Promise.resolve() : Promise.reject());
 };
 
 
 // ユーザー情報を取得
 QiitaCardProto.getUser = function () {
-  let key    = `qc-user-${this.options.user}`;
-  let oldKey = `qc-user-${this.options.oldUser}`;
+  const key    = `qc-user-${this.options.user}`;
+  const oldKey = `qc-user-${this.options.oldUser}`;
+  const url    = `${QIITA_API_URL}/users/${this.options.user}`;
 
-  let promise = new Promise((resolve, reject) => {
-    fetch(`${QIITA_API_URL}/users/${this.options.user}`)
-      .then(response => response.json())
-      .then(json => {
-        if (json.error) {
-          reject(json.error);
-          return;
-        }
-
-        this.getLimit()
-          .then(() => {
-            this.setUser(json);
-            this.clearLocalAPI(oldKey);
-            this.saveAPI(key, json);
-          })
-          // API上限に達した場合は、ローカルに保存したJSONを利用する
-          .catch(() => this.setUser(this.getLocalAPI(key)));
-
-        resolve();
-      })
-      .catch(err => console.error(err));
-  });
-
-  return promise;
+  return this.isLimit()
+    // API上限に達していない場合は、サーバーのAPIをコールする
+    .then(() => fetch(url))
+    .then(response => response.json())
+    .then(json => {
+      this.removeCache(oldKey);
+      this.saveCache(key, json);
+      return Promise.resolve(json);
+    })
+    // API上限に達した場合は、ローカルに保存したJSONを利用する
+    .catch(error => Promise.resolve(this.getCache(key)));
 };
 
 
 // 投稿した記事情報を取得
 QiitaCardProto.getItems = function () {
   const perPage = 100;
-  let   key     = `qc-items-${this.options.user}`;
-  let   oldKey  = `qc-items-${this.options.oldUser}`;
+  const url     = `${QIITA_API_URL}/users/${this.options.user}/items?per_page=${perPage}`;
+  const key     = `qc-items-${this.options.user}`;
+  const oldKey  = `qc-items-${this.options.oldUser}`;
 
-  let promise = new Promise((resolve, reject) => {
-    fetch(`${QIITA_API_URL}/users/${this.options.user}/items?per_page=${perPage}`)
-      .then(response => response.json())
-      .then(json => {
-        if (json.error) {
-          reject(json.error);
-          return;
-        }
-
-        this.getLimit()
-          .then(() => {
-            this.setItems(json);
-            this.clearLocalAPI(oldKey);
-            this.saveAPI(key, json);
-          })
-          // API上限に達した場合は、ローカルに保存したJSONを利用する
-          .catch(() => this.setItems(this.getLocalAPI(key)));
-
-        resolve();
-      })
-      .catch(err => console.error(err));
-  });
-
-  return promise;
+  return this.isLimit()
+    // API上限に達していない場合は、サーバーのAPIをコールする
+    .then(() => fetch(url))
+    .then(response => response.json())
+    .then(json => {
+      this.removeCache(oldKey);
+      this.saveCache(key, json);
+      return Promise.resolve(json);
+    })
+    // API上限に達した場合は、ローカルに保存したJSONを利用する
+    .catch(error => Promise.resolve(this.getCache(key)));
 };
 
 
 // ローカルにAPIを保存
-QiitaCardProto.saveAPI = function (key, val) {
+QiitaCardProto.saveCache = function (key, val) {
   window.sessionStorage.setItem(key, JSON.stringify(val));
 };
 
 
 // ローカルからAPIを取得
-QiitaCardProto.getLocalAPI = function (key) {
+QiitaCardProto.getCache = function (key) {
   return JSON.parse(window.sessionStorage.getItem(key));
 };
 
 
 // ローカルのAPIをクリア
-QiitaCardProto.clearLocalAPI = function (key) {
+QiitaCardProto.removeCache = function (key) {
   window.sessionStorage.removeItem(key);
 };
 
 
 // ユーザー情報を設定
-QiitaCardProto.setUser = function (user) {
-  this.el.userId.textContent           = user.url_name;
-  this.el.userId.href                  = user.url;
-  this.el.userImgLink.href             = user.url;
-  this.el.userFollowersLink.href       = `${user.url}/followers`;
-  this.el.userFollowers.textContent    = user.followers;
-  this.el.userItemsLink.href           = `${user.url}/items`;
-  this.el.userItems.textContent        = user.items;
+QiitaCardProto.renderUser = function (user) {
+  this.el.userId.textContent        = user.url_name;
+  this.el.userId.href               = user.url;
+  this.el.userImgLink.href          = user.url;
+  this.el.userFollowersLink.href    = `${user.url}/followers`;
+  this.el.userFollowers.textContent = user.followers;
+  this.el.userItemsLink.href        = `${user.url}/items`;
+  this.el.userItems.textContent     = user.items;
 
   // プロフィール画像がない場合は代替画像を表示
   if (/^https:\/\/si0.twimg.com\/profile_images\//.test(user.profile_image_url)) {
-    this.el.userImg.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAAllBMVEX////o7uTp7+X4+vfr8Of+/v7y9vDt8urq7+b2+PT8/fvu8uvx9e/7/Pr8/Pvs8eny9fD3+fb9/fzy9e/+//75+/j6/Pr5+vfp7uXu8+vp7+b9/v38/fzw9O31+PP+/v3w9O76+/nv8+3s8ejv8+zu8urx9O7q8Of2+fX2+PXz9vD4+fbr8Oju8+zv9O3///73+fX09/K8MWdZAAABzklEQVR4Xu3Xx27kQAxF0XerlNU5OOc8Mfz/z81GwMBAm03agr0Yn+VbCCTEUlH6P336NGvXx0WCVByv25neaFoVPFNUU71ertmhznqdg5oX1AeKKxcYFqWCujmmeaeQ6wYbzbUCcmKvlAP1JRySu8auwaXp5LKZ4zTfyGOB20IOBwR4JrwmoNZemZDsKXDUEqcM4D6XZb5n8FI8la1iQPUseDGuZHtkcKPBDYPdceHsOK2kXBRZWiXAiGeytAyupC5B6qQrwIhbWSYMltIa4Ku0BIx4LUvP4Ey6BbiVzgAj7mUpGEhKAEkSYMSFLGnHA0vAiJMsxFvG98D876V8Ays+kiXFx6aRpYgP9ndZeqJHj16WCdGPAxPf0QP6w/L0cCjZiFtZpoTNZHokqJCtIqiSxu15+s6XVPwafeeLPr6KfMSypNK/zpXjLpwns3deieNLe8C2wUaz/dgfH6lMGFKpqC2mraImmCaKajA1vxRziI2smAdsPChkc4KNk40iMozb8zl7nY831cRne4nDUn53OPyU2+URjNrzEy6/5fUDlzs5neJzdCmfFqcv8ulxOpbLCrdTeVzg1sqjxq2XQ0fASvv9IeBC+83fth/+BdHwHT1g8wDeAAAAAElFTkSuQmCC';
+    this.el.userImg.src = PROFILE_IMAGE;
   } else {
     this.el.userImg.src = user.profile_image_url;
   }
@@ -408,10 +375,10 @@ QiitaCardProto.calcContribution = function (items) {
 
 
 // 投稿した記事情報を設定
-QiitaCardProto.setItems = function (items) {
-  let   html             = '';
-  let   count            = this.options.count;
-  const trimHyphen       = str => str.match(/^\d+-\d+-\d+/)[0].replace(/-/g, '');
+QiitaCardProto.renderItems = function (items) {
+  let   html       = '';
+  let   count      = this.options.count;
+  const trimHyphen = str => str.match(/^\d+-\d+-\d+/)[0].replace(/-/g, '');
 
   // 投稿が0件の場合の処理
   if (!items || !items.length) {
@@ -433,12 +400,12 @@ QiitaCardProto.setItems = function (items) {
     if (index >= count) return true;
 
     html += `<section class="item">
-              <h2 class="item__title"><a href="${item.url}">${item.title}</a></h2>
-              <ul class="item__info">
-                <li class="item__stock"><span class="item__stockCount">${item.stock_count}</span>stocks</li>
-                <li class="item__date">${item.created_at.match(/^\d+-\d+-\d+/)[0]}</li>
-              </ul>
-            </section>`;
+               <h2 class="item__title"><a href="${item.url}">${item.title}</a></h2>
+               <ul class="item__info">
+                 <li class="item__stock"><span class="item__stockCount">${item.stock_count}</span>stocks</li>
+                 <li class="item__date">${item.created_at.match(/^\d+-\d+-\d+/)[0]}</li>
+               </ul>
+             </section>`;
   });
 
   this.el.container.innerHTML = html;
@@ -457,9 +424,8 @@ QiitaCardProto.setWidth = function () {
 // 再描画
 QiitaCardProto.render = function () {
   this.setWidth();
-  this.getUser()
-    .then(() => this.getItems())
-    .catch(text => window.alert(text));
+  this.getUser().then(json => this.renderUser(json));
+  this.getItems().then(json => this.renderItems(json));
 };
 
 
