@@ -1,8 +1,10 @@
-# qiita-card
+# &lt;qiita-card&gt;
 
-The `<qiita-card>` is one of blog parts of next generation.
+`<qiita-card>` is a custom element to display user contributions on [Qiita](http://qiita.com).
 
 ## How to use
+
+Import `qiita-card.html` and put `<qiita-card>` tag on your HTML.
 
 ```html
 <!DOCTYPE html>
@@ -18,39 +20,20 @@ The `<qiita-card>` is one of blog parts of next generation.
 
 ## Options
 
-### User ID
-
-- attribute: `user`
-- type: `String`
-- requred
-
-```html
-<qiita-card user="qiita"></qiita-card>
-```
-
-### Number of items
-
-- attribute: `count`
-- type: `Number`
+| Attribute | Type | Default | Required | Description |
+|---|---|---|:---:|---|
+| `user` | `String` | - | ✔ | User ID on [Qiita](http://qiita.com) |
+| `count` | `Number` | `3` | - | Display count of Item |
+| `sort` | `String` | `stock` | - | Display order by `stock` or `date` |
 
 ```html
-<qiita-card user="qiita" count="3"></qiita-card>
+<qiita-card
+  user="qiita"
+  count="3"
+  sort="stock">
+</qiita-card>
 ```
 
-### Width
+## License
 
-- attribute: `width`
-- type: `String` (`"px"` or `"%"`)
-
-```html
-<qiita-card user="qiita" width="250px"></qiita-card>
-```
-
-### Sort
-
-- attribute: `sort`
-- type: `String` (`"stock"` or `"date"`)
-
-```html
-<qiita-card user="qiita" sort="stock"></qiita-card>
-```
+MIT © tacamy
