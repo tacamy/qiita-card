@@ -415,15 +415,8 @@ QiitaCardProto.renderItems = function (items) {
 };
 
 
-// 属性で指定されたwidthを設定
-QiitaCardProto.setWidth = function () {
-  this.el.root.style.width = this.options.width;
-};
-
-
 // 再描画
 QiitaCardProto.render = function () {
-  this.setWidth();
   this.getUser().then(json => this.renderUser(json));
   this.getItems().then(json => this.renderItems(json));
 };
@@ -445,7 +438,6 @@ QiitaCardProto.attachedCallback = function () {
   this.options = {
     user  : this.getAttribute('user'), // 必須
     count : this.getAttribute('count') * 1 || 3,
-    width : this.getAttribute('width')     || '250px',
     sort  : this.getAttribute('sort')      || 'stock'
   };
 
