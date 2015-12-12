@@ -2,23 +2,17 @@
 
 The `<qiita-card>` is one of blog parts of next generation.
 
-This uses following technologies.
-
-- WebComponents
-- ES2015 (ES6)
-- [Fetch API](https://fetch.spec.whatwg.org/)
-
 ## How to use
 
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <link rel="import" href="qiita-card.html">
-</head>
-<body>
-  <qiita-card user="qiita"></qiita-card>
-</body>
+  <head>
+    <link rel="import" href="qiita-card.html">
+  </head>
+  <body>
+    <qiita-card user="qiita"></qiita-card>
+  </body>
 </html>
 ```
 
