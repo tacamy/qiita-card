@@ -366,11 +366,9 @@ QiitaCardProto.calcContribution = function (items) {
     return 0;
   }
 
-  let total = items.reduce((prev, current) => {
-    return { stock_count: prev.stock_count + current.stock_count };
-  });
-
-  return total.stock_count;
+  return items
+    .map(item => item.stock_count)
+    .reduce((prev, current) => prev + current);
 };
 
 
